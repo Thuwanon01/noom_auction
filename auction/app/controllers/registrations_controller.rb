@@ -23,6 +23,6 @@ class RegistrationsController < ApplicationController
   end
 
   def after_registration_path
-    auctions_path
+    onboarding_step_path(1)
   end
 end

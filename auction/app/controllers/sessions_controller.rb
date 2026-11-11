@@ -27,6 +27,6 @@ class SessionsController < ApplicationController
   private
 
   def after_login_path
-    auctions_path
+    current_user.completed? ? auctions_path : onboarding_path
   end
 end
