@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_11_080010) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_080412) do
+  create_table "otp_challenges", force: :cascade do |t|
+    t.string "phone", null: false
+    t.string "code_digest", null: false
+    t.datetime "expires_at", null: false
+    t.integer "attempts", default: 0, null: false
+    t.datetime "verified_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phone", "created_at"], name: "index_otp_challenges_on_phone_and_created_at"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "national_id"
     t.string "phone"
