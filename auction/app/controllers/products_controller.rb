@@ -32,11 +32,18 @@ class ProductsController < ApplicationController
 
   def update_step
     @step = params[:step].to_i
-    return render_unknown_step unless @step == 1
+    case @step
+    when 1
+      @product.assign_attributes(step1_params)
+      saved = @product.save(context: :step1)
+    when 2
+      saved = @product.valid?(:step2) # files are uploaded one by one; Next only checks they are complete
+    else
+      return render_unknown_step
+    end
 
-    @product.assign_attributes(step1_params)
-    if @product.save(context: :step1)
-      redirect_to step_product_path(@product, 2)
+    if saved
+      redirect_to step_product_path(@product, @step + 1)
     else
       render :step, status: :unprocessable_entity
     end

@@ -15,6 +15,10 @@ Rails.application.routes.draw do
   resources :auctions, only: %i[index show]
   resources :events, only: :new
   resources :products, only: %i[new create] do
+    resources :product_images, only: %i[create destroy] do
+      patch :reorder, on: :collection
+    end
+    resources :product_documents, only: %i[create destroy]
     member do
       get   "steps/:step", to: "products#step",        as: :step,        constraints: { step: /[1-4]/ }
       patch "steps/:step", to: "products#update_step", as: :update_step, constraints: { step: /[1-4]/ }
