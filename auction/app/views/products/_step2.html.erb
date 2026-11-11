@@ -1,0 +1,54 @@
+<% images = @product.product_images.includes(file_attachment: :blob).to_a %>
+<div class="form" data-controller="uploader" data-uploader-max-value="<%= ProductWizard::MAX_IMAGES %>"
+     data-uploader-existing-value="<%= images.size %>">
+  <%= render "products/errors", record: @product %>
+
+  <div class="field">
+    <span class="field__label">รูปสินค้า * (1–<%= ProductWizard::MAX_IMAGES %> รูป, JPG/PNG, ไม่เกิน 5 MB ต่อรูป)</span>
+    <span class="field__hint">ภาพถ่ายชัดเจนหลายมุมได้รับการเสนอราคามากกว่า · รูปแรกคือรูปปก ลากเพื่อจัดลำดับ</span>
+    <ul class="photos" data-controller="reorder" data-reorder-url-value="<%= reorder_product_product_images_path(@product) %>">
+      <% images.each_with_index do |image, i| %>
+        <li class="photos__item" draggable="true" data-id="<%= image.id %>">
+          <%= image_tag url_for(image.file.variant(:thumb)), alt: "รูปที่ #{i + 1}", class: "photos__img" %>
+          <% if i.zero? %><span class="tag">รูปปก</span><% end %>
+          <%= button_to "ลบ", product_product_image_path(@product, image), method: :delete, class: "btn btn--ghost",
+                        form: { data: { turbo_confirm: "ลบรูปนี้?" } } %>
+        </li>
+      <% end %>
+    </ul>
+    <label class="dropzone">
+      <input type="file" multiple accept="image/jpeg,image/png" hidden
+             data-uploader-target="input" data-action="change->uploader#pick"
+             data-url="<%= product_product_images_path(@product) %>" data-types="image/jpeg,image/png" data-max-bytes="<%= ProductImage::MAX_BYTES %>">
+      คลิกเพื่อเลือกรูป
+    </label>
+    <ul class="uploads" data-uploader-target="list" aria-live="polite"></ul>
+  </div>
+
+  <div class="field">
+    <span class="field__label">เอกสารยืนยันความแท้ <%= @product.proof_required? ? "*" : "(ไม่บังคับ)" %></span>
+    <span class="field__hint">
+      <%= @product.proof_required? ? "จำเป็นสำหรับ#{@product.category_label}: ใบรับรอง ใบเสร็จ หรือทะเบียน" : "ใบรับรอง ใบเสร็จ หรือทะเบียน" %> · PDF/JPG/PNG ไม่เกิน 10 MB
+    </span>
+    <ul class="docs">
+      <% @product.product_documents.each do |doc| %>
+        <li><%= doc.file.filename %>
+          <%= button_to "ลบ", product_product_document_path(@product, doc), method: :delete, class: "btn btn--ghost" %></li>
+      <% end %>
+    </ul>
+    <label class="dropzone">
+      <input type="file" accept="application/pdf,image/jpeg,image/png" hidden
+             data-uploader-target="input" data-action="change->uploader#pick" data-single="true"
+             data-url="<%= product_product_documents_path(@product) %>"
+             data-types="application/pdf,image/jpeg,image/png" data-max-bytes="<%= ProductDocument::MAX_BYTES %>">
+      คลิกเพื่อเลือกไฟล์
+    </label>
+  </div>
+
+  <%= form_with url: update_step_product_path(@product, 2), method: :patch do %>
+    <div class="form__actions">
+      <%= link_to "ย้อนกลับ", step_product_path(@product, 1), class: "btn btn--ghost" %>
+      <%= submit_tag "ถัดไป", class: "btn btn--primary" %>
+    </div>
+  <% end %>
+</div>

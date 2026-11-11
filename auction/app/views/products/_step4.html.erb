@@ -1,0 +1,53 @@
+<% auction = @product.auction %>
+<%= form_with model: @product, scope: :product, url: update_step_product_path(@product, 4), method: :patch, class: "form" do |f| %>
+  <%= render "products/errors", record: @product %>
+
+  <section class="review">
+    <h2 class="section-title">1. ข้อมูลสินค้า <%= link_to "แก้ไข", step_product_path(@product, 1), class: "review__edit" %></h2>
+    <dl class="facts">
+      <div><dt>ชื่อ</dt><dd><%= @product.name %></dd></div>
+      <div><dt>ประเภท</dt><dd><%= @product.category_label %></dd></div>
+      <div><dt>สภาพ</dt><dd><%= @product.condition_label %></dd></div>
+      <div><dt>รายละเอียด</dt><dd><%= simple_format(h(@product.description)) %></dd></div>
+      <% if @product.brand.present? || @product.model.present? || @product.year.present? %>
+        <div><dt>ยี่ห้อ / รุ่น / ปี</dt><dd><%= [ @product.brand, @product.model, @product.year ].compact_blank.join(" / ") %></dd></div>
+      <% end %>
+    </dl>
+
+    <h2 class="section-title">2. รูปและเอกสาร <%= link_to "แก้ไข", step_product_path(@product, 2), class: "review__edit" %></h2>
+    <ul class="photos">
+      <% @product.product_images.includes(file_attachment: :blob).each_with_index do |image, i| %>
+        <li class="photos__item"><%= image_tag url_for(image.file.variant(:thumb)), alt: "รูปที่ #{i + 1}", class: "photos__img" %>
+          <% if i.zero? %><span class="tag">รูปปก</span><% end %></li>
+      <% end %>
+    </ul>
+    <p class="field__hint">เอกสารยืนยัน: <%= @product.product_documents.map { |d| d.file.filename.to_s }.to_sentence.presence || "ไม่มี" %></p>
+
+    <h2 class="section-title">3. ตั้งค่าประมูล <%= link_to "แก้ไข", step_product_path(@product, 3), class: "review__edit" %></h2>
+    <% if auction %>
+      <dl class="facts">
+        <div><dt>รูปแบบ</dt><dd><%= { "english" => "ประมูลขึ้นราคา", "dutch" => "ประมูลลดราคา", "sealed" => "ประมูลซองปิด" }[auction.auction_type] %></dd></div>
+        <div><dt>ราคาเริ่มต้น</dt><dd>฿<%= number_with_delimiter(auction.start_price) %></dd></div>
+        <div><dt>ราคาสำรอง</dt><dd><%= auction.reserve_price ? "฿#{number_with_delimiter(auction.reserve_price)}" : "ไม่มี" %></dd></div>
+        <% if auction.english? %><div><dt>บิดขั้นต่ำ</dt><dd>฿<%= number_with_delimiter(auction.bid_increment) %></dd></div><% end %>
+        <% if auction.dutch? %>
+          <div><dt>ราคาต่ำสุด</dt><dd>฿<%= number_with_delimiter(auction.floor_price) %></dd></div>
+          <div><dt>ลดราคา</dt><dd>฿<%= number_with_delimiter(auction.price_drop) %> ทุก <%= auction.drop_interval_minutes %> นาที</dd></div>
+        <% end %>
+        <div><dt>เริ่ม</dt><dd><%= l(auction.start_at, format: :long) %></dd></div>
+        <div><dt>สิ้นสุด</dt><dd><%= l(auction.stop_at, format: :long) %></dd></div>
+      </dl>
+    <% end %>
+  </section>
+
+  <label class="field">
+    <span><%= f.check_box :accept_terms, { checked: @product.accept_terms.in?([ "1", true ]) }, "1", "0" %>
+      ฉันเป็นเจ้าของสินค้านี้ ข้อมูลเป็นความจริง และยอมรับเงื่อนไขผู้ขาย</span>
+  </label>
+
+  <div class="form__actions">
+    <%= link_to "ย้อนกลับ", step_product_path(@product, 3), class: "btn btn--ghost" %>
+    <%= f.button "บันทึกแบบร่าง", name: "intent", value: "draft", class: "btn btn--ghost", formnovalidate: true %>
+    <%= f.button "ส่งตรวจสอบ", name: "intent", value: "submit", class: "btn btn--primary" %>
+  </div>
+<% end %>

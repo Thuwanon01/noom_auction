@@ -1,8 +1,12 @@
 <details class="profile">
   <summary class="profile__avatar" aria-label="บัญชีผู้ใช้">👤</summary>
   <div class="profile__menu">
-    <%= link_to "Login", login_path %>
-    <a href="#">Profile</a>
-    <a href="#">Logout</a>
+    <% if logged_in? %>
+      <p class="profile__who"><%= current_user.email %></p>
+      <%= button_to "Logout", logout_path, method: :delete %>
+    <% else %>
+      <%= link_to "Login", login_path %>
+      <%= link_to "Register", register_path %>
+    <% end %>
   </div>
 </details>

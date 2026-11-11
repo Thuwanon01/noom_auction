@@ -9,7 +9,7 @@
 #   q         text over product name and category label, case-insensitive
 #   status    live | upcoming | ended
 #   type[]    english | dutch | sealed (multi)
-#   category[] Product::CATEGORIES keys (multi)
+#   category[] Product::CATEGORIES (multi)
 #   price     one of PRICE_RANGES keys
 #   sort      ending (default) | price_asc | price_desc
 #   page      1-based, clamped to 1..total_pages
@@ -48,7 +48,7 @@ class AuctionSearch
     @q = params[:q].to_s.strip.first(100).presence
     @status = pick(params[:status], Auction::PHASES)
     @types = pick_many(params[:type], Auction.auction_types.keys)
-    @categories = pick_many(params[:category], Product::CATEGORIES.keys)
+    @categories = pick_many(params[:category], Product::CATEGORIES)
     @price = pick(params[:price], PRICE_RANGES.keys)
     @sort = pick(params[:sort], SORTS.keys) || DEFAULT_SORT
     @requested_page = params[:page]
@@ -124,7 +124,7 @@ class AuctionSearch
   def apply_text(s)
     needle = q.downcase
     pattern = "%#{Auction.sanitize_sql_like(needle)}%"
-    matching_categories = Product::CATEGORIES.select { |key, label| key.include?(needle) || label.downcase.include?(needle) }.keys
+    matching_categories = Product::CATEGORY_LABELS.select { |key, label| key.include?(needle) || label.downcase.include?(needle) }.keys
     name_match = Product.arel_table[:name].lower.matches(pattern, "\\")
     s.where(name_match.or(Product.arel_table[:category].in(matching_categories)))
   end

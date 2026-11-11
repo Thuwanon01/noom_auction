@@ -7,7 +7,7 @@ class CatalogFlowTest < ApplicationSystemTestCase
   setup do
     # 3 fixture auctions (live English, Dutch, Sealed) + 8 more = 11 public auctions, 2 pages.
     8.times { |i| create_auction(name: "Camera Lot #{i}", category: "camera", type: "english", price: 1_000 + i * 500) }
-    create_auction(name: "Upcoming Guitar", category: "instrument", type: "english", start_at: 1.day.from_now, stop_at: 2.days.from_now)
+    create_auction(name: "Upcoming Guitar", category: "musical_instrument", type: "english", start_at: 1.day.from_now, stop_at: 2.days.from_now)
     create_auction(name: "Ended Teak Table", category: "furniture", type: "dutch", start_at: 3.days.ago, stop_at: 1.day.ago)
   end
 
