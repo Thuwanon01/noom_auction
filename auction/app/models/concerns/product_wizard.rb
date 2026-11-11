@@ -17,7 +17,7 @@ module ProductWizard
     validates :year, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 2100 },
                      allow_nil: true, on: %i[step1 submit]
     # Minimal completeness rules so later steps cannot be opened early; M2.4/M2.5 add the detailed ones.
-    validate :needs_photo, on: %i[step2 submit]
+    validate :needs_photo, :needs_proof, on: %i[step2 submit]
     validate :needs_auction, on: %i[step3 submit]
   end
 
@@ -40,6 +40,12 @@ module ProductWizard
 
   def needs_photo
     errors.add(:base, "Add at least 1 photo") if product_images.none?
+  end
+
+  def needs_proof
+    return unless proof_required? && product_documents.none?
+
+    errors.add(:base, "Proof of authenticity is required for #{category_label}")
   end
 
   def needs_auction

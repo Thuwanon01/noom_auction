@@ -24,16 +24,16 @@ class ProductTest < ActiveSupport::TestCase
 
   test "product has images ordered by position and a document" do
     p = products(:camera)
-    p.product_images.create!(position: 2)
-    p.product_images.create!(position: 1)
+    p.product_images.create!(position: 2, file: png_upload)
+    p.product_images.create!(position: 1, file: png_upload)
     assert_equal [ 1, 2 ], p.product_images.map(&:position)
-    assert p.product_documents.create!.proof?
+    assert p.product_documents.create!(file: pdf_upload).proof?
   end
 
   test "destroying a product removes its auction and files" do
     p = products(:camera)
     p.update_columns(status: "available") # in_event products cannot be destroyed (M2.2)
-    p.product_images.create!(position: 1)
+    p.product_images.create!(position: 1, file: png_upload)
     assert_difference [ "Auction.count", "ProductImage.count" ], -1 do
       p.destroy!
     end
