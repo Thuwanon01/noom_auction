@@ -6,18 +6,23 @@ class BidsController < ApplicationController
 
   before_action :require_login
 
-  SUCCESS_MESSAGES = { "english" => "You are the highest bidder" }.freeze
+  SUCCESS_MESSAGES = {
+    "english" => "You are the highest bidder",
+    "dutch" => "You bought this item for ฿%{price}. Please pay within 48 hours"
+  }.freeze
 
   def create
     auction = Auction.publicly_listed.find(params[:auction_id])
     result = place(auction)
 
     if result.success?
-      redirect_to auction_path(auction), flash: { bid_notice: SUCCESS_MESSAGES.fetch(auction.auction_type) }, status: :see_other
+      notice = format(SUCCESS_MESSAGES.fetch(auction.auction_type), price: result.bid.amount.to_fs(:delimited))
+      redirect_to auction_path(auction), flash: { bid_notice: notice }, status: :see_other
     else
       load_auction_detail(auction.id)
       @bid_error = result.message
       @bid_amount = params[:amount]
+      @reconfirm = result.error == :price_changed
       render "auctions/show", status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordNotFound
@@ -27,8 +32,12 @@ class BidsController < ApplicationController
   private
 
   def place(auction)
-    PlaceBid.call(user: current_user, auction: auction, amount: params[:amount],
-                  idempotency_key: params[:idempotency_key].presence || SecureRandom.uuid,
-                  expected_price: params[:expected_price].presence)
+    key = params[:idempotency_key].presence || SecureRandom.uuid
+    if auction.dutch?
+      BuyNow.call(user: current_user, auction: auction, expected_price: params[:expected_price], idempotency_key: key)
+    else
+      PlaceBid.call(user: current_user, auction: auction, amount: params[:amount], idempotency_key: key,
+                    expected_price: params[:expected_price].presence)
+    end
   end
 end

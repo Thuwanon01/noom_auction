@@ -12,7 +12,7 @@
   <% when :complete_profile %>
     <%= link_to "Complete your profile to bid", register_path, class: "btn btn--primary btn--block" %>
   <% when :bid_form %>
-    <%= render "auctions/bid_form", auction: auction %>
+    <%= render auction.dutch? ? "auctions/buy_now_form" : "auctions/bid_form", auction: auction %>
   <% when :highest_bidder %>
     <p class="action-area__note">You are the highest bidder</p>
     <p class="bid-box__note">เสนอราคาได้อีกครั้งเมื่อมีผู้เสนอราคาสูงกว่า</p>
@@ -29,6 +29,7 @@
     <% price = auction.winning_price %>
     <div class="result">
       <p class="bid-box__label">ผลการประมูล</p>
+      <% if auction.sold? %><p class="result__status">Sold</p><% end %>
       <% if price %>
         <p class="result__price">ราคาที่ชนะ <%= baht(price) %></p>
       <% else %>

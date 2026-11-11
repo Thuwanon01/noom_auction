@@ -2,11 +2,8 @@ require "application_system_test_case"
 
 # M4.4 (#40) JavaScript behaviour: quick buttons, client-side checks and the
 # confirm dialog. Needs Chrome; skipped where it is not installed (CI/WSL).
-class EnglishBiddingJsTest < ApplicationSystemTestCase
-  driven_by :selenium, using: :headless_chrome, screen_size: [ 1280, 900 ]
-
+class EnglishBiddingJsTest < JsSystemTestCase
   setup do
-    skip "Chrome not available" unless system("which google-chrome chromium > /dev/null 2>&1") || File.exist?("/Applications/Google Chrome.app")
     @auction = auctions(:english)
     visit login_path
     fill_in "email", with: users(:buyer).email

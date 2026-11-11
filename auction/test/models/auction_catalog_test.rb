@@ -77,3 +77,18 @@ class AuctionCatalogTest < ActiveSupport::TestCase
     assert_nil @auction.winning_price
   end
 end
+
+class AuctionDutchListedPriceTest < ActiveSupport::TestCase
+  setup { @dutch = auctions(:dutch) } # 10,000, -500 every 10 min, floor 5,000
+
+  test "an open Dutch auction lists the price at that moment, not the stored current_price" do
+    now = @dutch.start_at + 25.minutes
+    assert_equal 9_000, @dutch.listed_price(now)
+    assert_equal 9_000, @dutch.next_min_bid(now)
+  end
+
+  test "a sold Dutch auction lists the price it sold at" do
+    @dutch.update!(status: :sold, current_price: 7_500, closed_at: Time.current)
+    assert_equal 7_500, @dutch.listed_price(@dutch.start_at + 100.minutes)
+  end
+end

@@ -79,15 +79,21 @@ class Auction < ApplicationRecord
   def upcoming?(now = Time.current) = phase(now) == "upcoming"
   def ended?(now = Time.current) = phase(now) == "ended"
 
-  # The price shown in the catalog. Sealed bids are secret, so it stays at the start price.
-  def listed_price = sealed? ? start_price : current_price
+  # The price shown in the catalog. Sealed bids are secret, so it stays at the
+  # start price. An open Dutch auction shows the price at that moment.
+  # (LISTED_PRICE_SQL still sorts Dutch by the stored current_price.)
+  def listed_price(now = Time.current)
+    return start_price if sealed?
+    return dutch_price_at(now) if dutch? && open?
+    current_price
+  end
 
   def bid_count = bids.size
 
-  def next_min_bid
+  def next_min_bid(now = Time.current)
     case auction_type
     when "english" then current_price + bid_increment
-    when "dutch"   then current_price
+    when "dutch"   then listed_price(now)
     else start_price
     end
   end

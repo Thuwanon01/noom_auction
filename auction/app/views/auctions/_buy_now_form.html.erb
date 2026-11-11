@@ -1,0 +1,19 @@
+<%# Dutch "Buy now" (M4.7). The server buys at its own price; expected_price
+    only detects a drop after the page loaded. %>
+<% price = auction.listed_price(@now) %>
+<%= form_with url: auction_bids_path(auction), class: "buy-now", aria: { label: "ซื้อทันที" },
+      data: { controller: "buy-now", action: "submit->buy-now#confirm turbo:submit-end->buy-now#submitEnd turbo:fetch-request-error->buy-now#networkError",
+              buy_now_price_value: price, buy_now_reconfirm_value: @reconfirm.present? } do %>
+  <%= hidden_field_tag :idempotency_key, SecureRandom.uuid, id: nil %>
+  <%= hidden_field_tag :expected_price, price, id: nil %>
+  <button class="btn btn--primary btn--block" type="submit" data-turbo-submits-with="กำลังส่ง…">Buy now at <%= baht(price) %></button>
+  <p class="bid-flash bid-flash--error" role="alert" data-buy-now-target="error" <%= "hidden" unless @bid_error %>><%= @bid_error %></p>
+
+  <dialog class="confirm-dialog" data-buy-now-target="dialog" aria-labelledby="confirm-buy-text">
+    <p id="confirm-buy-text" data-buy-now-target="message"></p>
+    <div class="confirm-dialog__actions">
+      <button type="button" class="btn btn--ghost" data-action="buy-now#cancel">Cancel</button>
+      <button type="button" class="btn btn--primary" data-action="buy-now#accept">Confirm</button>
+    </div>
+  </dialog>
+<% end %>
