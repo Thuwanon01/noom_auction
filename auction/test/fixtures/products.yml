@@ -1,0 +1,23 @@
+camera:
+  code: P-0001
+  seller: seller
+  name: Vintage Film Camera
+  category: electronics
+  condition: good
+  status: live
+
+watch:
+  code: P-0002
+  seller: seller
+  name: Mechanical Watch
+  category: fashion
+  condition: like_new
+  status: live
+
+painting:
+  code: P-0003
+  seller: seller
+  name: Oil Painting
+  category: art
+  condition: good
+  status: live

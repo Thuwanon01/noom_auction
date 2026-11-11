@@ -1,0 +1,25 @@
+seller:
+  name: Somchai Seller
+  email: seller@example.com
+  onboarding_status: completed
+  credit_score: 780
+  credit_grade: A
+
+buyer:
+  name: Bua Buyer
+  email: buyer@example.com
+  onboarding_status: completed
+  credit_score: 700
+  credit_grade: B
+
+other_buyer:
+  name: Chai Other
+  email: other@example.com
+  onboarding_status: completed
+  credit_score: 600
+  credit_grade: C
+
+newbie:
+  name: Nok New
+  email: newbie@example.com
+  onboarding_status: not_started

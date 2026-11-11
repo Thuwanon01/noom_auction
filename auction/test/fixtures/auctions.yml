@@ -1,0 +1,27 @@
+english:
+  product: camera
+  auction_type: english
+  start_price: 1000
+  current_price: 1000
+  bid_increment: 100
+  start_at: <%= 1.hour.ago.to_fs(:db) %>
+  stop_at: <%= 1.day.from_now.to_fs(:db) %>
+
+dutch:
+  product: watch
+  auction_type: dutch
+  start_price: 10000
+  current_price: 10000
+  floor_price: 5000
+  price_drop: 500
+  drop_interval_minutes: 10
+  start_at: <%= 1.hour.ago.to_fs(:db) %>
+  stop_at: <%= 1.day.from_now.to_fs(:db) %>
+
+sealed:
+  product: painting
+  auction_type: sealed
+  start_price: 2000
+  current_price: 2000
+  start_at: <%= 1.hour.ago.to_fs(:db) %>
+  stop_at: <%= 1.day.from_now.to_fs(:db) %>
