@@ -97,6 +97,14 @@ class BidsControllerTest < ActionDispatch::IntegrationTest
     assert_select ".bid-flash--error", text: "Over your bid limit. Your limit is ฿10,000"
   end
 
+  test "the result is shown next to the form, not again as a page toast" do
+    sign_in_as @buyer
+    post_bid(amount: 1_100)
+    follow_redirect!
+    assert_select ".bid-flash--success", 1
+    assert_select ".flash", text: "You are the highest bidder", count: 0
+  end
+
   test "the highest bidder sees a note instead of the form" do
     sign_in_as @buyer
     post_bid(amount: 1_100)

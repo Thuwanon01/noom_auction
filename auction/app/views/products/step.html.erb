@@ -1,0 +1,19 @@
+<% content_for :title, "ลงทะเบียนสินค้า · Noom Auction" %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :register_product %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <h1 class="shop__title">Register Product</h1>
+        <p class="shop__subtitle">ลงทะเบียนสินค้าเพื่อนำไปเปิดประมูล</p>
+      </div>
+      <div class="shop__actions"><%= render "shared/profile" %></div>
+    </header>
+    <%= render "shared/flash" %>
+    <% if @product.rejected? && @product.rejection_reason.present? %>
+      <p class="flash flash--alert" role="alert">สินค้านี้ไม่ผ่านการตรวจสอบ: <%= @product.rejection_reason %> · แก้ไขแล้วส่งอีกครั้งได้</p>
+    <% end %>
+    <%= render "products/progress", step: @step, product: @product %>
+    <%= render "products/step#{@step}" %>
+  </main>
+</div>

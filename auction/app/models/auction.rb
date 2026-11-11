@@ -1,4 +1,6 @@
 class Auction < ApplicationRecord
+  include AuctionSellerSetup
+
   # Anti-sniping (spec §2.7, open point 3): a bid inside the window pushes
   # stop_at back by EXTENSION, at most MAX_EXTENSIONS times.
   ANTI_SNIPING_WINDOW = 2.minutes
@@ -68,48 +70,6 @@ class Auction < ApplicationRecord
     open? && start_at <= now && now < stop_at
   end
 
-  # Dutch: start price minus one drop per full interval since start_at,
-  # never below the floor (spec §3.1).
-  def dutch_price_at(time)
-    [ start_price - dutch_drops_at(time) * price_drop.to_i, floor_price.to_i ].max
-  end
-
-  # When the Dutch price next drops, or nil once it has reached the floor.
-  def next_dutch_drop_at(time)
-    return if dutch_price_at(time) <= floor_price.to_i
-
-    start_at + (dutch_drops_at(time) + 1) * dutch_interval
-  end
-
-  # Bid history the viewer may see (spec §4.5, §6). Sealed amounts stay
-  # hidden until the auction ends: a bidder sees only their own bid, others
-  # see none. "Ends" is stop_at (or an earlier close), not the close job,
-  # because no bid can be placed after stop_at anyway.
-  def bids_visible_to(viewer, now = Time.current)
-    scope = bids.order(placed_at: :desc, id: :desc)
-    return scope unless sealed? && !ended?(now)
-
-    viewer ? scope.where(user: viewer) : scope.none
-  end
-
-  # Close with a winner. Call with the row locked. The winner has
-  # PAYMENT_WINDOW to pay before ExpirePaymentJob cancels the sale.
-  def award!(winner:, price:, now:)
-    update!(status: :sold, winner: winner, current_price: price, closed_at: now, payment_due_at: now + PAYMENT_WINDOW)
-    product.update!(status: "sold") # M2 lifecycle: in_event -> sold; sold -> available if unpaid
-    Notify.auction_closed(self)
-    ExpirePaymentJob.set(wait_until: payment_due_at).perform_later(id)
-  end
-
-  # Call with the row locked. Returns true when stop_at was pushed back.
-  def extend_for_late_bid!(now)
-    return false if extension_count >= MAX_EXTENSIONS
-    return false if stop_at - now > ANTI_SNIPING_WINDOW
-
-    update!(stop_at: stop_at + ANTI_SNIPING_EXTENSION, extension_count: extension_count + 1)
-    true
-  end
-
   def phase(now = Time.current)
     return "ended" if !open? || now >= stop_at
     return "upcoming" if now < start_at
@@ -144,6 +104,48 @@ class Auction < ApplicationRecord
     top = bids.ranked.first
     return if top.nil? || (reserve_price && top.amount < reserve_price)
     top.amount
+  end
+
+  # Dutch: start price minus one drop per full interval since start_at,
+  # never below the floor (spec §3.1).
+  def dutch_price_at(time)
+    [ start_price - dutch_drops_at(time) * price_drop.to_i, floor_price.to_i ].max
+  end
+
+  # When the Dutch price next drops, or nil once it has reached the floor.
+  def next_dutch_drop_at(time)
+    return if dutch_price_at(time) <= floor_price.to_i
+
+    start_at + (dutch_drops_at(time) + 1) * dutch_interval
+  end
+
+  # Bid history the viewer may see (spec §4.5, §6). Sealed amounts stay
+  # hidden until the auction ends: a bidder sees only their own bid, others
+  # see none. "Ends" is stop_at (or an earlier close), not the close job,
+  # because no bid can be placed after stop_at anyway.
+  def bids_visible_to(viewer, now = Time.current)
+    scope = bids.order(placed_at: :desc, id: :desc)
+    return scope unless sealed? && !ended?(now)
+
+    viewer ? scope.where(user: viewer) : scope.none
+  end
+
+  # Close with a winner. Call with the row locked. The winner has
+  # PAYMENT_WINDOW to pay before ExpirePaymentJob cancels the sale.
+  def award!(winner:, price:, now:)
+    update!(status: :sold, winner: winner, current_price: price, closed_at: now, payment_due_at: now + PAYMENT_WINDOW)
+    product.update!(status: "pending_payment")
+    Notify.auction_closed(self)
+    ExpirePaymentJob.set(wait_until: payment_due_at).perform_later(id)
+  end
+
+  # Call with the row locked. Returns true when stop_at was pushed back.
+  def extend_for_late_bid!(now)
+    return false if extension_count >= MAX_EXTENSIONS
+    return false if stop_at - now > ANTI_SNIPING_WINDOW
+
+    update!(stop_at: stop_at + ANTI_SNIPING_EXTENSION, extension_count: extension_count + 1)
+    true
   end
 
   private
