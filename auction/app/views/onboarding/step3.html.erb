@@ -1,0 +1,26 @@
+<%= render layout: "onboarding/shell", locals: { step: 3, title: OnboardingController::STEP_TITLES[3] } do %>
+  <%= form_with url: onboarding_step_path(3), method: :post, class: "form",
+                data: ({ controller: "auto-submit" } unless @scoring_failed) do |f| %>
+    <% if @scoring_failed %>
+      <div class="scoring scoring--error" role="alert">
+        <p class="scoring__title">Something went wrong</p>
+        <p class="scoring__note">ข้อมูลที่กรอกไว้ยังอยู่ครบ ลองใหม่อีกครั้งได้เลย</p>
+      </div>
+      <div class="form__actions">
+        <%= link_to "ย้อนกลับ", onboarding_step_path(2), class: "btn btn--ghost" %>
+        <%= f.button "Retry", class: "btn btn--primary" %>
+      </div>
+    <% else %>
+      <div class="scoring" role="status" aria-live="polite">
+        <span class="scoring__spinner" aria-hidden="true"></span>
+        <p class="scoring__title">Calculating your score…</p>
+        <p class="scoring__note">ใช้อาชีพ รายได้ และประสบการณ์ที่คุณกรอก</p>
+      </div>
+      <div class="form__actions">
+        <%= link_to "ย้อนกลับ", onboarding_step_path(2), class: "btn btn--ghost" %>
+        <%# Clicked automatically by the auto-submit controller; visible for no-JS users. %>
+        <%= f.button "คำนวณคะแนน", class: "btn btn--primary", data: { auto_submit_target: "button" } %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>
