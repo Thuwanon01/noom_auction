@@ -166,6 +166,8 @@
 }
 .chip--on .chip__count { background: rgba(15, 20, 36, 0.18); }
 
+.toolbar__selects { display: flex; gap: 16px; flex-wrap: wrap; }
+
 .toolbar__sort { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; }
 .toolbar__sort select {
   padding: 8px 12px;
