@@ -1,6 +1,7 @@
 <%# Action area by viewer and auction state (M3.9). See AuctionActionState. %>
 <div class="action-area" data-state="<%= state %>">
   <% if notice.present? %><p class="bid-flash bid-flash--success" role="status"><%= notice %></p><% end %>
+  <% if alert.present? %><p class="bid-flash bid-flash--error" role="alert"><%= alert %></p><% end %>
   <%# The bid form shows its own error; other states (e.g. just ended) show it here. %>
   <% if @bid_error && state != :bid_form %><p class="bid-flash bid-flash--error" role="alert"><%= @bid_error %></p><% end %>
   <% case state %>
@@ -36,5 +37,6 @@
         <p class="result__price">ไม่มีผู้ชนะ</p>
       <% end %>
     </div>
+    <%= render "auctions/payment", auction: auction %>
   <% end %>
 </div>
