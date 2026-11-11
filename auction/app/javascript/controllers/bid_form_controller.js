@@ -14,6 +14,24 @@ export default class extends Controller {
     this.hideError()
   }
 
+  connect() {
+    this.keepWhileBusy = (event) => {
+      if (event.target === this.element && this.busy) event.preventDefault()
+    }
+    document.addEventListener("turbo:before-morph-element", this.keepWhileBusy)
+  }
+
+  disconnect() {
+    document.removeEventListener("turbo:before-morph-element", this.keepWhileBusy)
+  }
+
+  // A live refresh (M4.9) must not wipe what the user is typing or confirming.
+  // The server still re-checks the price, so a stale form only means
+  // "Price changed" on submit.
+  get busy() {
+    return this.dialogTarget.open || this.element.contains(document.activeElement) || this.amountTarget.value.trim() !== ""
+  }
+
   confirm(event) {
     if (this.confirmed) { this.confirmed = false; return }
     event.preventDefault()

@@ -8,7 +8,20 @@ export default class extends Controller {
   static values = { price: Number, reconfirm: Boolean }
 
   connect() {
+    this.keepWhileBusy = (event) => {
+      if (event.target === this.element && this.busy) event.preventDefault()
+    }
+    document.addEventListener("turbo:before-morph-element", this.keepWhileBusy)
     if (this.reconfirmValue) this.open(`The price is now ${this.baht(this.priceValue)}. Buy now?`)
+  }
+
+  disconnect() {
+    document.removeEventListener("turbo:before-morph-element", this.keepWhileBusy)
+  }
+
+  // Do not morph the form away while the confirm dialog is open (M4.9).
+  get busy() {
+    return this.dialogTarget.open
   }
 
   confirm(event) {
