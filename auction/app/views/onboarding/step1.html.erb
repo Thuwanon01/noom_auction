@@ -1,8 +1,53 @@
-<%= render layout: "onboarding/shell", locals: { step: 1, title: OnboardingController::STEP_TITLES[1] } do %>
-  <%= form_with url: onboarding_step_path(1), method: :post, class: "form" do |f| %>
+<%= render layout: "onboarding/shell", locals: { step: 1, title: OnboardingController::STEP_TITLES[1],
+                                                 subtitle: "เลขบัตรประชาชนและเบอร์มือถือของคุณ" } do %>
+  <%= form_with model: @user, scope: :user, url: onboarding_step_path(1), method: :post, class: "form",
+                data: { controller: "identity",
+                        identity_verified_phone_value: (@user.phone if @user.phone_verified?) } do |f| %>
+    <label class="field"><span class="field__label">เลขบัตรประจำตัวประชาชน</span>
+      <%= f.text_field :national_id, class: "input", inputmode: "numeric", autocomplete: "off", maxlength: 17,
+                       placeholder: "13 หลัก", required: true,
+                       data: { identity_target: "nationalId", action: "input->identity#check" } %>
+      <span class="field__error" data-identity-target="idHint" hidden>Invalid ID number</span>
+      <%= render "onboarding/field_error", record: @user, attribute: :national_id %>
+    </label>
+
+    <div class="field">
+      <label class="field__label" for="user_phone">เบอร์มือถือ</label>
+      <div class="field-inline">
+        <%= f.telephone_field :phone, class: "input", inputmode: "numeric", autocomplete: "tel", maxlength: 12,
+                              placeholder: "08XXXXXXXX", required: true,
+                              data: { identity_target: "phone", action: "input->identity#check" } %>
+        <%= f.button "ส่ง OTP", type: "submit", class: "btn btn--ghost", formaction: onboarding_otp_path, formnovalidate: true %>
+      </div>
+      <span class="field__hint">เบอร์ 10 หลัก ขึ้นต้นด้วย 06, 08 หรือ 09</span>
+      <%= render "onboarding/field_error", record: @user, attribute: :phone %>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="otp_code">รหัส OTP</label>
+      <% if @user.phone_verified? %>
+        <p class="otp-ok" data-identity-target="verifiedBadge">✓ ยืนยันเบอร์ <%= mask_phone(@user.phone) %> แล้ว</p>
+      <% else %>
+        <div class="field-inline">
+          <%= text_field_tag :otp_code, nil, class: "input", inputmode: "numeric", autocomplete: "one-time-code",
+                             maxlength: 6, placeholder: "6 หลัก" %>
+          <%= f.button "ยืนยัน OTP", type: "submit", class: "btn btn--ghost", formaction: verify_onboarding_otp_path, formnovalidate: true %>
+        </div>
+        <span class="field__hint">รหัสมีอายุ 5 นาที กรอกผิดได้ 3 ครั้ง</span>
+      <% end %>
+      <% if @otp_error %><span class="field__error" role="alert"><%= @otp_error %></span><% end %>
+    </div>
+
+    <label class="check">
+      <%= f.check_box :pdpa_consent, { checked: @user.pdpa_consented?,
+                                       data: { identity_target: "consent", action: "change->identity#check" } } %>
+      <span>ฉันยินยอมให้เก็บและใช้ข้อมูลส่วนบุคคลตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA) เพื่อยืนยันตัวตนและประเมินเครดิต</span>
+    </label>
+    <%= render "onboarding/field_error", record: @user, attribute: :pdpa_consent %>
+
     <div class="form__actions">
-      <% if 1 > 1 %><%= link_to "ย้อนกลับ", onboarding_step_path(0), class: "btn btn--ghost" %><% end %>
-      <%= f.button "ถัดไป", class: "btn btn--primary" %>
+      <%= f.button "ถัดไป", class: "btn btn--primary", disabled: !@user.phone_verified?,
+                             data: { identity_target: "next" } %>
     </div>
   <% end %>
 <% end %>

@@ -16,6 +16,10 @@ class OnboardingController < ApplicationController
   before_action :redirect_completed_user
   before_action :set_step, only: %i[show update]
   before_action :guard_step, only: %i[show update]
+  before_action :set_step1, only: %i[send_otp verify_otp]
+
+  rate_limit to: 10, within: 10.minutes, only: :send_otp,
+             with: -> { redirect_to onboarding_step_path(1), alert: "Too many OTP requests. Try again later." }
 
   def index
     redirect_to onboarding_step_path(current_user.onboarding_step_reached)
@@ -27,6 +31,42 @@ class OnboardingController < ApplicationController
 
   def update
     send("update_step#{@step}")
+  end
+
+  # Step 1, "Send OTP": saves the ID and phone as a draft, then sends a code.
+  def send_otp
+    assign_identity
+    return render_step1 unless @user.save(context: :otp_request)
+
+    result = otp_service.send_code(@user.phone)
+    if result.sent?
+      redirect_to onboarding_step_path(1), notice: "OTP sent to #{helpers.mask_phone(@user.phone)}"
+    else
+      redirect_to onboarding_step_path(1), alert: result.message
+    end
+  end
+
+  # Step 1, "Verify OTP": checks the code for the phone saved by send_otp.
+  def verify_otp
+    assign_identity
+    if @user.phone_changed? || @user.phone.blank?
+      @otp_error = "Send an OTP to this phone number first"
+      return render_step1
+    end
+
+    result = otp_service.verify(@user.phone, params[:otp_code])
+    unless result.ok?
+      @otp_error = result.message
+      return render_step1
+    end
+
+    @user.phone_verified_at = Time.current
+    unless @user.save(context: :otp_request)
+      # Keep the verification even if the ID typed next to it is not valid yet.
+      @user.restore_attributes(%i[national_id])
+      @user.save!(context: :otp_request)
+    end
+    redirect_to onboarding_step_path(1), notice: result.message
   end
 
   private
@@ -48,6 +88,27 @@ class OnboardingController < ApplicationController
                 alert: "Please finish this step first"
   end
 
+  def set_step1
+    @step = 1
+    @user = current_user
+  end
+
+  def render_step1
+    render :step1, status: :unprocessable_entity
+  end
+
+  # Shared by Send OTP, Verify OTP and Next, which all submit the same form.
+  def assign_identity
+    @user.assign_attributes(params.fetch(:user, {}).permit(:national_id, :phone, :pdpa_consent))
+    return if @user.pdpa_consent.nil?
+
+    @user.pdpa_consented_at = @user.pdpa_consent ? (@user.pdpa_consented_at || Time.current) : nil
+  end
+
+  def otp_service
+    @otp_service ||= OtpService.new
+  end
+
   def finish_step(step)
     @user.onboarding_status = User.status_after_step(step)
   end
@@ -59,9 +120,15 @@ class OnboardingController < ApplicationController
   # --- Per-step handlers. Each one is filled in by its own issue. ---
 
   def update_step1
+    assign_identity
     finish_step(1)
-    @user.save!
-    go_to_next_step
+
+    if @user.save(context: :step1)
+      go_to_next_step
+    else
+      @user.restore_attributes(%i[onboarding_status pdpa_consented_at])
+      render_step1
+    end
   end
 
   def update_step2
