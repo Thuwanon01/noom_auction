@@ -1,9 +1,9 @@
-require "application_system_test_case"
+require "browser_system_test_case"
 
 # Exercises the JavaScript of wizard step 2 and 3 in a real browser (needs Chrome).
-class ProductUploadTest < ApplicationSystemTestCase
+class ProductUploadTest < BrowserSystemTestCase
   setup do
-    visit "/dev/login/#{users(:seller).id}"
+    browser_sign_in users(:seller)
     @product = Product.create!(seller: users(:seller), name: "Browser test item", category: "camera", condition: "good",
                                description: "A camera used for the browser tests, fine.")
   end

@@ -1,5 +1,8 @@
 require "test_helper"
 
+# System tests use rack_test (no browser needed). The onboarding pages work
+# without JavaScript, so this covers the full flow. Tests that need the Stimulus
+# controllers use BrowserSystemTestCase instead.
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-  driven_by :selenium, using: :headless_chrome, screen_size: [ 1400, 1400 ]
+  driven_by :rack_test
 end

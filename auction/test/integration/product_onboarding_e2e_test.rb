@@ -123,6 +123,6 @@ class ProductOnboardingE2eTest < ActionDispatch::IntegrationTest
   test "a seller who is not onboarded cannot walk the flow at all" do
     login_as users(:newbie)
     get new_product_path
-    assert_redirected_to root_path
+    assert_redirected_to onboarding_step_path(1)
   end
 end

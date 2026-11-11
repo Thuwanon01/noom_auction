@@ -78,4 +78,7 @@ Rails.application.configure do
 
   # Allow the Railway public domain when running on Railway.
   config.hosts << ENV["RAILWAY_PUBLIC_DOMAIN"] if ENV["RAILWAY_PUBLIC_DOMAIN"].present?
+
+  # OTP codes are written to the log instead of sent by SMS. See OtpService.
+  config.x.otp_adapter = "OtpAdapters::Mock"
 end

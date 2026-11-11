@@ -1,6 +1,30 @@
+# National IDs below pass the Thai checksum. They are test data only.
+completed:
+  email: done@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
+  national_id: "1101700203450"
+  phone: "0812345678"
+  phone_verified_at: <%= 1.day.ago.to_fs(:db) %>
+  pdpa_consented_at: <%= 1.day.ago.to_fs(:db) %>
+  occupation: private_employee
+  annual_income: 480000
+  years_experience: 4
+  credit_score: 670
+  credit_grade: B
+  score_model_version: v1-draft
+  confirmed_at: <%= 1.day.ago.to_fs(:db) %>
+  onboarding_status: completed
+
+fresh:
+  email: fresh@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
+  onboarding_status: not_started
+
+# Users for the product, auction and bidding tests (M2/M4). All fixture users share the password "password123".
 seller:
   name: Somchai Seller
   email: seller@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
   onboarding_status: completed
   credit_score: 780
   credit_grade: A
@@ -8,6 +32,7 @@ seller:
 buyer:
   name: Bua Buyer
   email: buyer@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
   onboarding_status: completed
   credit_score: 700
   credit_grade: B
@@ -15,6 +40,7 @@ buyer:
 other_buyer:
   name: Chai Other
   email: other@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
   onboarding_status: completed
   credit_score: 600
   credit_grade: C
@@ -22,12 +48,21 @@ other_buyer:
 newbie:
   name: Nok New
   email: newbie@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
   onboarding_status: not_started
 
 admin:
   name: Ada Admin
   email: admin@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
   onboarding_status: completed
   credit_score: 800
   credit_grade: A
   admin: true
+
+seller_as_buyer_a:
+  name: Anan GradeA
+  email: grade-a@example.com
+  onboarding_status: completed
+  credit_score: 800
+  credit_grade: A
