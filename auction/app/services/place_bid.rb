@@ -90,6 +90,7 @@ class PlaceBid
     bid = @auction.bids.create!(user: @user, amount: @amount, placed_at: now, idempotency_key: @idempotency_key)
     @auction.update!(current_price: @amount)
     extended = @auction.extend_for_late_bid!(now)
+    Notify.outbid(@auction, leader) if leader
     Result.ok(bid, previous_leader: leader, extended: extended)
   end
 

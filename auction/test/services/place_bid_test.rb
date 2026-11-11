@@ -113,6 +113,7 @@ class PlaceBidConcurrencyTest < ActiveSupport::TestCase
   self.use_transactional_tests = false
 
   teardown do
+    Notification.delete_all
     Bid.delete_all
   end
 
