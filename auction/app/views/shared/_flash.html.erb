@@ -1,3 +1,4 @@
-<% flash.each do |kind, message| %>
-  <p class="flash flash--<%= kind %>" role="<%= kind == 'alert' ? 'alert' : 'status' %>"><%= message %></p>
+<% flash.each do |type, message| %>
+  <% next unless message.is_a?(String) %>
+  <div class="flash flash--<%= type == "alert" ? "alert" : "notice" %>" role="<%= type == "alert" ? "alert" : "status" %>"><%= message %></div>
 <% end %>

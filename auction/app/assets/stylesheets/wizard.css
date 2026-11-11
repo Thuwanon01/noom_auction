@@ -6,7 +6,6 @@
 .wizard-progress__step--done { border-top-color: var(--ink-2); }
 .wizard-progress__step--on { border-top-color: var(--ink); color: var(--ink); font-weight: 500; }
 .wizard-progress__step a { color: inherit; }
-.flash { margin: 0 0 var(--s-4); padding: var(--s-3); border: 1px solid var(--line-strong); border-radius: var(--radius); font-size: var(--fs-sm); }
 .flash--alert { border-color: var(--danger); color: var(--danger); }
 .flash--notice { border-color: var(--ok); color: var(--ok); }
 .form-errors { margin: 0; padding: var(--s-3) var(--s-5); border: 1px solid var(--danger); border-radius: var(--radius); color: var(--danger); font-size: var(--fs-sm); }

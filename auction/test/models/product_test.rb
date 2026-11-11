@@ -4,7 +4,7 @@ class ProductTest < ActiveSupport::TestCase
   test "enums cover the spec values" do
     assert_equal 10, Product.categories.size
     assert_equal %w[new like_new good fair for_parts], Product.conditions.keys
-    assert_equal %w[draft pending_review rejected available in_event sold withdrawn], Product.statuses.keys
+    assert_equal %w[draft pending_review rejected available in_event pending_payment sold withdrawn], Product.statuses.keys
   end
 
   test "new products start as draft" do
