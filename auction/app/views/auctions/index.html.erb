@@ -39,16 +39,13 @@
 
     <%= form_with url: auctions_path, method: :get, class: "toolbar", data: { turbo: false } do %>
       <div class="toolbar__chips">
-        <%= link_to auctions_path(sort: @sort), class: ["chip", ("chip--on" if @status.nil?)] do %>
+        <%= link_to auctions_path(sort: @sort, price: @price), class: ["chip", ("chip--on" if @status.nil?)] do %>
           ทั้งหมด <span class="chip__count"><%= @counts["all"] %></span>
         <% end %>
         <% AuctionsController::STATUSES.each do |key, label| %>
-          <%= link_to auctions_path(status: key, sort: @sort), class: ["chip", "chip--#{key}", ("chip--on" if @status == key)] do %>
+          <%= link_to auctions_path(status: key, sort: @sort, price: @price), class: ["chip", "chip--#{key}", ("chip--on" if @status == key)] do %>
             <%= label %> <span class="chip__count"><%= @counts.fetch(key, 0) %></span>
           <% end %>
-        <%= link_to "ทั้งหมด", auctions_path(sort: @sort, price: @price), class: ["chip", ("chip--on" if @status.nil?)] %>
-        <% AuctionsController::STATUSES.each do |key, label| %>
-          <%= link_to label, auctions_path(status: key, sort: @sort, price: @price), class: ["chip", "chip--#{key}", ("chip--on" if @status == key)] %>
         <% end %>
       </div>
       <div class="toolbar__selects">

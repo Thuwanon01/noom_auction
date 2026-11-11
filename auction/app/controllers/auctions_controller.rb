@@ -18,6 +18,8 @@ class AuctionsController < ApplicationController
     "English" => "ประมูลขึ้นราคา",
     "Dutch"   => "ประมูลลดราคา",
     "Sealed"  => "ประมูลซองปิด"
+  }.freeze
+
   PRICE_RANGES = {
     "0-1000"       => { label: "≤ ฿1,000",           range: 0..1_000 },
     "1001-3000"    => { label: "฿1,001 – 3,000",     range: 1_001..3_000 },
