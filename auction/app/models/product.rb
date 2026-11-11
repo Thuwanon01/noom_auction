@@ -6,7 +6,8 @@ class Product < ApplicationRecord
 
   enum :category, CATEGORIES.index_by(&:itself)
   enum :condition, %w[new like_new good fair for_parts].index_by(&:itself), prefix: true
-  enum :status, %w[draft pending_review rejected available in_event sold withdrawn].index_by(&:itself), default: "draft"
+  # pending_payment: auction closed with a winner, waiting for the 48-hour payment (M4.10/M4.11).
+  enum :status, %w[draft pending_review rejected available in_event pending_payment sold withdrawn].index_by(&:itself), default: "draft"
 
   belongs_to :seller, class_name: "User"
   has_one :auction, dependent: :destroy
