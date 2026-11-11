@@ -16,7 +16,7 @@ class ProductWizardStep1Test < ActionDispatch::IntegrationTest
   test "a user who has not finished onboarding cannot start" do
     login_as users(:newbie)
     get new_product_path
-    assert_redirected_to root_path
+    assert_redirected_to onboarding_step_path(1)
     assert_no_difference("Product.count") { post products_path, params: { product: VALID } }
   end
 
