@@ -95,7 +95,7 @@ class BuyNowRaceTest < ActiveSupport::TestCase
     Notification.delete_all
     Bid.delete_all
     auctions(:dutch).update_columns(status: "open", winner_id: nil, closed_at: nil, current_price: 10_000)
-    products(:watch).update_columns(status: "live")
+    products(:watch).update_columns(status: "in_event")
   end
 
   test "two buyers racing: exactly one wins" do

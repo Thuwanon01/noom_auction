@@ -93,7 +93,7 @@ class CloseAuctionJobTest < ActiveJob::TestCase
 
   test "creating an auction schedules the close job at stop_at" do
     stop = 1.day.from_now.change(usec: 0)
-    product = Product.create!(code: "P-9", seller: users(:seller), name: "Lamp", status: "live")
+    product = Product.create!(code: "P-9", seller: users(:seller), name: "Lamp", status: "in_event")
     assert_enqueued_with(job: CloseAuctionJob, at: stop) do
       Auction.create!(product: product, auction_type: :english, start_price: 100, start_at: Time.current, stop_at: stop)
     end
