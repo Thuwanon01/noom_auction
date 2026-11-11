@@ -163,9 +163,15 @@ class OnboardingController < ApplicationController
   end
 
   def update_step4
+    @user.confirm_truth = params.dig(:user, :confirm_truth)
     finish_step(4)
     @user.confirmed_at = Time.current
-    @user.save!
-    redirect_to auctions_path
+
+    if @user.save(context: :confirm)
+      redirect_to auctions_path, notice: "Your profile is complete. Welcome to Noom Auction!"
+    else
+      @user.restore_attributes(%i[onboarding_status confirmed_at])
+      render :step4, status: :unprocessable_entity
+    end
   end
 end
