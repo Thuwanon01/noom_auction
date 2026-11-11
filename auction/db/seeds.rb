@@ -102,6 +102,7 @@ puts "Seeded #{Auction.count} auctions, #{Bid.count} bids, #{User.count} users."
 unless Rails.env.production?
   User.find_or_create_by!(email: "admin@example.com") do |u|
     u.name = "Ada Admin"
+    u.password = "password123"
     u.onboarding_status = "completed"
     u.admin = true
   end
