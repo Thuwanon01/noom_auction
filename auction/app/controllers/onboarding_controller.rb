@@ -132,9 +132,15 @@ class OnboardingController < ApplicationController
   end
 
   def update_step2
+    @user.assign_attributes(params.fetch(:user, {}).permit(:occupation, :annual_income, :years_experience))
     finish_step(2)
-    @user.save!
-    go_to_next_step
+
+    if @user.save(context: :step2)
+      go_to_next_step
+    else
+      @user.restore_attributes(%i[onboarding_status])
+      render :step2, status: :unprocessable_entity
+    end
   end
 
   def update_step3
