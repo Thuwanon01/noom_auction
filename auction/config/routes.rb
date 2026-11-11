@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   resources :products, only: :new
   get "my/events",   to: "events#index",   as: :my_events
   get "my/products", to: "products#index", as: :my_products
+  get "my/bids",     to: "my_bids#index",  as: :my_bids
   get "login",    to: "sessions#new",       as: :login
   get "register", to: "registrations#new",  as: :register
   get "design",   to: "design#index"
