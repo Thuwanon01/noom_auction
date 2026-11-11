@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_11_080412) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_081051) do
+  create_table "credit_scores", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.json "inputs", null: false
+    t.json "breakdown", null: false
+    t.integer "score", null: false
+    t.string "grade", null: false
+    t.string "model_version", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_credit_scores_on_user_id"
+  end
+
   create_table "otp_challenges", force: :cascade do |t|
     t.string "phone", null: false
     t.string "code_digest", null: false
@@ -44,4 +56,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_080412) do
     t.index ["national_id"], name: "index_users_on_national_id", unique: true
     t.index ["phone"], name: "index_users_on_phone", unique: true
   end
+
+  add_foreign_key "credit_scores", "users"
 end
