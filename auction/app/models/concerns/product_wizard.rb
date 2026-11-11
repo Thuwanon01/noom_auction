@@ -49,6 +49,10 @@ module ProductWizard
   end
 
   def needs_auction
-    errors.add(:base, "Set up the auction") if auction.blank?
+    if auction.blank?
+      errors.add(:base, "Set up the auction")
+    elsif !auction.valid?(:seller_setup)
+      errors.add(:base, "The auction setup is incomplete or out of date (check the start time)")
+    end
   end
 end

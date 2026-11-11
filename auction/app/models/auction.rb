@@ -1,4 +1,6 @@
 class Auction < ApplicationRecord
+  include AuctionSellerSetup
+
   MONEY_FIELDS = %i[start_price reserve_price bid_increment floor_price price_drop current_price].freeze
 
   enum :auction_type, %w[english dutch sealed].index_by(&:itself)
