@@ -53,4 +53,7 @@ Rails.application.configure do
 
   # Encrypt attributes declared with `encrypts` when loading fixtures.
   config.active_record.encryption.encrypt_fixtures = true
+
+  # OTP codes are written to the log instead of sent by SMS. See OtpService.
+  config.x.otp_adapter = "OtpAdapters::Mock"
 end
