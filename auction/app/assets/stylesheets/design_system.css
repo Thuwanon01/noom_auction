@@ -275,3 +275,7 @@ textarea { resize: vertical; min-height: 96px; }
 .confirm-dialog::backdrop { background: rgb(0 0 0 / 0.4); }
 .confirm-dialog p { margin: 0 0 var(--s-4); }
 .confirm-dialog__actions { display: flex; justify-content: flex-end; gap: var(--s-2); }
+
+/* M4.7 Dutch buy now */
+.buy-now { display: grid; gap: var(--s-2); }
+.result__status { margin: 0 0 var(--s-1); font-weight: 600; letter-spacing: 0.02em; }

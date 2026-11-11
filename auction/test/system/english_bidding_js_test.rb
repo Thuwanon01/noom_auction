@@ -2,17 +2,10 @@ require "application_system_test_case"
 
 # M4.4 (#40) JavaScript behaviour: quick buttons, client-side checks and the
 # confirm dialog. Needs Chrome; skipped where it is not installed (CI/WSL).
-class EnglishBiddingJsTest < ApplicationSystemTestCase
-  driven_by :selenium, using: :headless_chrome, screen_size: [ 1280, 900 ]
-
+class EnglishBiddingJsTest < JsSystemTestCase
   setup do
-    skip "Chrome not available" unless system("which google-chrome chromium > /dev/null 2>&1") || File.exist?("/Applications/Google Chrome.app")
     @auction = auctions(:english)
-    visit auction_path(@auction) # establish the session cookie on the app host
-    page.evaluate_async_script(<<~JS, test_sign_in_path, users(:buyer).id)
-      const [path, id, done] = arguments
-      fetch(path, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "user_id=" + id }).then(() => done())
-    JS
+    sign_in_as users(:buyer)
     visit auction_path(@auction)
   end
 

@@ -1,12 +1,22 @@
 <%# Price box (M3.7): current price, minimum next bid, bid count, countdown. %>
 <div class="bid-box">
   <p class="bid-box__label"><%= price_label(auction, now: @now) %></p>
-  <p class="bid-box__price" data-testid="current-price"><%= baht(auction.listed_price) %></p>
+  <p class="bid-box__price" data-testid="current-price"><%= baht(auction.listed_price(@now)) %></p>
   <dl class="bid-box__stats">
-    <% if phase == "live" && !auction.sealed? %>
+    <% if phase == "live" && auction.english? %>
       <div><dt>เสนอราคาขั้นต่ำ</dt><dd data-testid="next-min-bid"><%= baht(auction.next_min_bid) %></dd></div>
     <% end %>
     <div><dt>จำนวนการเสนอราคา</dt><dd data-testid="bid-count"><%= number_with_delimiter(auction.bid_count) %></dd></div>
+    <% next_drop = phase == "live" && auction.dutch? && auction.next_dutch_drop_at(@now) %>
+    <% if next_drop %>
+      <div>
+        <dt>ราคาลดลงในอีก (฿<%= number_with_delimiter(auction.price_drop) %>)</dt>
+        <dd data-testid="next-drop" data-controller="countdown reload" data-countdown-to-value="<%= next_drop.iso8601 %>"
+            data-countdown-done-value="กำลังอัปเดตราคา…" data-action="countdown:done->reload#now">
+          <%= thai_duration(next_drop - @now) %>
+        </dd>
+      </div>
+    <% end %>
     <% if phase == "live" %>
       <div>
         <dt>ปิดในอีก</dt>
