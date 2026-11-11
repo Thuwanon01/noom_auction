@@ -28,6 +28,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true,
                     format: { with: URI::MailTo::EMAIL_REGEXP, allow_blank: true }
   validates :password, length: { minimum: 8 }, allow_nil: true
+  validates :name, length: { maximum: 100 }
 
   # Step 1: identity
   attribute :pdpa_consent, :boolean
@@ -106,6 +107,12 @@ class User < ApplicationRecord
   # Logged-in pages that need a finished profile use OnboardingGate#require_onboarded.
   def onboarded?
     completed?
+  end
+
+  # Shown to other users (seller, bid history). Registration does not ask for a name, so fall back to the part
+  # of the email before the @.
+  def display_name
+    name.presence || email.to_s.split("@").first
   end
 
   def latest_credit_score
