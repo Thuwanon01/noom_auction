@@ -1,0 +1,17 @@
+# National IDs below pass the Thai checksum. They are test data only.
+completed:
+  national_id: "1101700203450"
+  phone: "0812345678"
+  phone_verified_at: <%= 1.day.ago.to_fs(:db) %>
+  pdpa_consented_at: <%= 1.day.ago.to_fs(:db) %>
+  occupation: private_employee
+  annual_income: 480000
+  years_experience: 4
+  credit_score: 670
+  credit_grade: B
+  score_model_version: v1-draft
+  confirmed_at: <%= 1.day.ago.to_fs(:db) %>
+  onboarding_status: completed
+
+fresh:
+  onboarding_status: not_started
