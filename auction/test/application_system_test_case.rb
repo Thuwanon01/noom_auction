@@ -29,13 +29,14 @@ class JsSystemTestCase < ApplicationSystemTestCase
 
   setup { skip "Chrome not available" unless self.class.chrome_available? }
 
-  # Signs in through the test-only endpoint from inside the browser, so the
-  # session cookie lands in Chrome. Visits a page first to set the origin.
-  def sign_in_as(user, from: root_path)
+  # Signs in through the real login endpoint from inside the browser, so the session cookie lands in Chrome.
+  # Visits a page first to set the origin. Every fixture user has the password "password123".
+  def sign_in_as(user, from: root_path, password: "password123")
     visit from
-    page.evaluate_async_script(<<~JS, test_sign_in_path, user.id)
-      const [path, id, done] = arguments
-      fetch(path, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "user_id=" + id }).then(() => done())
+    page.evaluate_async_script(<<~JS, login_path, user.email, password)
+      const [path, email, password, done] = arguments
+      fetch(path, { method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams({ email, password }) }).then(() => done())
     JS
   end
 end
