@@ -36,6 +36,9 @@ Rails.application.routes.draw do
   get "my/products", to: "products#index", as: :my_products
   get "login",    to: "sessions#new",       as: :login
   get "register", to: "registrations#new",  as: :register
-  post "dev/login", to: "dev_sessions#create", as: :dev_login if Rails.env.local?
+  if Rails.env.local? # temporary until M1.2 (#8); GET form is for browser system tests
+    post "dev/login", to: "dev_sessions#create", as: :dev_login
+    get  "dev/login/:user_id", to: "dev_sessions#create"
+  end
   get "design",   to: "design#index"
 end
