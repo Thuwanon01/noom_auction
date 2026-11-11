@@ -1,0 +1,30 @@
+<% content_for :title, "Review · Noom Auction" %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :admin %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <h1 class="shop__title">ตรวจสอบสินค้า</h1>
+        <p class="shop__subtitle">สินค้าที่รอการอนุมัติ (เก่าสุดก่อน)</p>
+      </div>
+      <div class="shop__actions"><%= render "shared/profile" %></div>
+    </header>
+    <%= render "shared/flash" %>
+    <% if @products.empty? %>
+      <p class="empty">ไม่มีสินค้าที่รอตรวจสอบ</p>
+    <% else %>
+      <table class="table">
+        <thead><tr><th>รหัส</th><th>ชื่อสินค้า</th><th>ผู้ขาย</th><th>ประเภท</th><th>ส่งเมื่อ</th><th></th></tr></thead>
+        <tbody>
+          <% @products.each do |p| %>
+            <tr id="product_<%= p.id %>">
+              <td><%= p.code %></td><td><%= p.name %></td><td><%= p.seller.name %></td>
+              <td><%= p.category_label %></td><td><%= l(p.updated_at, format: :short) %></td>
+              <td class="row-actions"><%= link_to "ตรวจสอบ", admin_product_path(p), class: "btn btn--primary" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </main>
+</div>

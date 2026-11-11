@@ -1,4 +1,6 @@
 class Auction < ApplicationRecord
+  include AuctionSellerSetup
+
   # Anti-sniping (spec §2.7, open point 3): a bid inside the window pushes
   # stop_at back by EXTENSION, at most MAX_EXTENSIONS times.
   ANTI_SNIPING_WINDOW = 2.minutes
@@ -94,7 +96,7 @@ class Auction < ApplicationRecord
   # PAYMENT_WINDOW to pay before ExpirePaymentJob cancels the sale.
   def award!(winner:, price:, now:)
     update!(status: :sold, winner: winner, current_price: price, closed_at: now, payment_due_at: now + PAYMENT_WINDOW)
-    product.update!(status: "sold") # M2 lifecycle: in_event -> sold; sold -> available if unpaid
+    product.update!(status: "pending_payment")
     Notify.auction_closed(self)
     ExpirePaymentJob.set(wait_until: payment_due_at).perform_later(id)
   end

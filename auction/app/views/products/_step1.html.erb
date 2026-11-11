@@ -1,0 +1,27 @@
+<%= form_with model: @product, url: (@product.persisted? ? update_step_product_path(@product, 1) : products_path),
+              method: (@product.persisted? ? :patch : :post), class: "form" do |f| %>
+  <%= render "products/errors", record: @product %>
+  <label class="field"><span class="field__label">ชื่อสินค้า *</span>
+    <%= f.text_field :name, class: "input", maxlength: 100, required: true %>
+    <span class="field__hint">5–100 ตัวอักษร</span></label>
+  <div class="field-row">
+    <label class="field"><span class="field__label">ประเภทสินค้า *</span>
+      <%= f.select :category, Product::CATEGORY_LABELS.invert.to_a, { include_blank: "เลือกประเภท" }, required: true %></label>
+    <div class="field"><span class="field__label">สภาพสินค้า *</span>
+      <% Product::CONDITION_LABELS.each do |value, label| %>
+        <label><%= f.radio_button :condition, value, required: true %> <%= label %></label>
+      <% end %></div>
+  </div>
+  <label class="field"><span class="field__label">รายละเอียดสินค้า *</span>
+    <%= f.text_area :description, maxlength: 2000, required: true %>
+    <span class="field__hint">20–2,000 ตัวอักษร</span></label>
+  <div class="field-row">
+    <label class="field"><span class="field__label">ยี่ห้อ</span><%= f.text_field :brand, class: "input", maxlength: 100 %></label>
+    <label class="field"><span class="field__label">รุ่น</span><%= f.text_field :model, class: "input", maxlength: 100 %></label>
+  </div>
+  <label class="field"><span class="field__label">ปี</span><%= f.number_field :year, class: "input", min: 1, max: 2100 %></label>
+  <div class="form__actions">
+    <%= link_to "ยกเลิก", my_products_path, class: "btn btn--ghost" %>
+    <%= f.submit "ถัดไป", class: "btn btn--primary" %>
+  </div>
+<% end %>

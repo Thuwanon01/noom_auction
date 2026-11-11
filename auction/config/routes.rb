@@ -14,13 +14,35 @@ Rails.application.routes.draw do
 
   resources :auctions, only: %i[index show]
   resources :events, only: :new
-  resources :products, only: :new
+  resources :products, only: %i[new create destroy] do
+    resources :product_images, only: %i[create destroy] do
+      patch :reorder, on: :collection
+    end
+    resources :product_documents, only: %i[create destroy]
+    member do
+      get   "steps/:step", to: "products#step",        as: :step,        constraints: { step: /[1-4]/ }
+      patch "steps/:step", to: "products#update_step", as: :update_step, constraints: { step: /[1-4]/ }
+    end
+  end
+  namespace :admin do
+    resources :products, only: %i[index show] do
+      member do
+        patch :approve
+        patch :reject
+      end
+    end
+  end
   get "my/events",   to: "events#index",   as: :my_events
   get "my/products", to: "products#index", as: :my_products
-  get "login",    to: "sessions#new",       as: :login
-  get "register", to: "registrations#new",  as: :register
+  get    "login",    to: "sessions#new",          as: :login
+  post   "login",    to: "sessions#create"
+  delete "logout",   to: "sessions#destroy",      as: :logout
+  get  "onboarding",       to: "onboarding#index",  as: :onboarding
+  post "onboarding/otp",        to: "onboarding#send_otp",   as: :onboarding_otp
+  post "onboarding/otp/verify", to: "onboarding#verify_otp", as: :verify_onboarding_otp
+  get  "onboarding/:step", to: "onboarding#show",   as: :onboarding_step, constraints: { step: /[1-4]/ }
+  post "onboarding/:step", to: "onboarding#update", constraints: { step: /[1-4]/ }
+  get    "register", to: "registrations#new",     as: :register
+  post   "register", to: "registrations#create"
   get "design",   to: "design#index"
-
-  # Test-only sign-in until M1 login exists. Controller: test/support/test_sessions_controller.rb
-  post "test/sign_in", to: "test_sessions#create", as: :test_sign_in if Rails.env.test?
 end
