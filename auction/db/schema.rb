@@ -50,6 +50,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_094700) do
     t.index ["user_id"], name: "index_bids_on_user_id"
   end
 
+  create_table "credit_scores", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.json "inputs", null: false
+    t.json "breakdown", null: false
+    t.integer "score", null: false
+    t.string "grade", null: false
+    t.string "model_version", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_credit_scores_on_user_id"
+  end
+
+  create_table "otp_challenges", force: :cascade do |t|
+    t.string "phone", null: false
+    t.string "code_digest", null: false
+    t.datetime "expires_at", null: false
+    t.integer "attempts", default: 0, null: false
+    t.datetime "verified_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phone", "created_at"], name: "index_otp_challenges_on_phone_and_created_at"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "code", null: false
     t.integer "seller_id", null: false
@@ -65,19 +88,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_094700) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "email", null: false
-    t.string "onboarding_status", default: "not_started", null: false
+    t.string "national_id"
+    t.string "phone"
+    t.datetime "phone_verified_at"
+    t.datetime "pdpa_consented_at"
+    t.date "birth_date"
+    t.string "occupation"
+    t.decimal "annual_income", precision: 12, scale: 2
+    t.decimal "years_experience", precision: 3, scale: 1
     t.integer "credit_score"
     t.string "credit_grade"
+    t.string "score_model_version"
+    t.datetime "confirmed_at"
+    t.string "onboarding_status", default: "not_started", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "email"
+    t.string "password_digest"
+    t.string "name"
+    t.boolean "admin", default: false, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["national_id"], name: "index_users_on_national_id", unique: true
+    t.index ["phone"], name: "index_users_on_phone", unique: true
   end
 
   add_foreign_key "auctions", "products"
   add_foreign_key "auctions", "users", column: "winner_id"
   add_foreign_key "bids", "auctions"
   add_foreign_key "bids", "users"
+  add_foreign_key "credit_scores", "users"
   add_foreign_key "products", "users", column: "seller_id"
 end
