@@ -19,3 +19,34 @@ fresh:
   email: fresh@example.com
   password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
   onboarding_status: not_started
+
+# Users for the product, auction and bidding tests (M2/M4). All fixture users share the password "password123".
+seller:
+  name: Somchai Seller
+  email: seller@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
+  onboarding_status: completed
+  credit_score: 780
+  credit_grade: A
+
+buyer:
+  name: Bua Buyer
+  email: buyer@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
+  onboarding_status: completed
+  credit_score: 700
+  credit_grade: B
+
+other_buyer:
+  name: Chai Other
+  email: other@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
+  onboarding_status: completed
+  credit_score: 600
+  credit_grade: C
+
+newbie:
+  name: Nok New
+  email: newbie@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
+  onboarding_status: not_started

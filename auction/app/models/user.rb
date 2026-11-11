@@ -14,6 +14,9 @@ class User < ApplicationRecord
 
   has_secure_password
   has_many :credit_scores, dependent: :destroy
+  # M2 / M4: products a user sells and bids a user places.
+  has_many :products, foreign_key: :seller_id, inverse_of: :seller, dependent: :restrict_with_exception
+  has_many :bids, dependent: :restrict_with_exception
 
   normalizes :email, with: ->(email) { email.strip.downcase }
   # Users often type "1-2345-67890-12-3" or "081-234-5678".
