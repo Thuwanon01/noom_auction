@@ -1,0 +1,41 @@
+<% content_for :title, "My Bids · Noom Auction" %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :my_bids %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <p class="crumb">My Bids</p>
+        <h1 class="shop__title">การประมูลของฉัน</h1>
+      </div>
+      <div class="shop__actions"><%= render "shared/profile" %></div>
+    </header>
+
+    <% if @rows.empty? %>
+      <p class="empty">คุณยังไม่ได้เสนอราคา · <%= link_to "ดูรายการประมูล", auctions_path %></p>
+    <% else %>
+      <ul class="my-bids">
+        <% @rows.each do |row| %>
+          <% a = row.auction %>
+          <li class="my-bid">
+            <div class="my-bid__main">
+              <%= link_to a.product.name, auction_path(a), class: "my-bid__title" %>
+              <p class="my-bid__meta"><%= auction_type_label(a.auction_type) %> · ปิด <%= thai_datetime(a.stop_at) %></p>
+            </div>
+            <dl class="my-bid__stats">
+              <div><dt>ราคาที่คุณเสนอ</dt><dd><%= baht(row.my_amount) %></dd></div>
+              <div><dt><%= a.open? ? "ราคาปัจจุบัน" : "ราคาปิด" %></dt><dd><%= baht(a.listed_price) %></dd></div>
+            </dl>
+            <div class="my-bid__status">
+              <span class="badge badge--static my-bid__badge my-bid__badge--<%= row.status %>" data-status="<%= row.status %>"><%= row.label %></span>
+              <% if row.paid? %>
+                <p class="bid-box__note">ชำระแล้ว</p>
+              <% elsif row.payment_due_at %>
+                <p class="bid-box__note">ชำระภายใน <%= thai_datetime(row.payment_due_at) %></p>
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </main>
+</div>

@@ -290,3 +290,17 @@ textarea { resize: vertical; min-height: 96px; }
 /* M4.7 Dutch buy now */
 .buy-now { display: grid; gap: var(--s-2); }
 .result__status { margin: 0 0 var(--s-1); font-weight: 600; letter-spacing: 0.02em; }
+
+/* M4.13 My bids */
+.my-bids { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); }
+.my-bid { display: grid; grid-template-columns: 1fr auto auto; gap: var(--s-4); align-items: center; padding: var(--s-3) var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--radius); }
+.my-bid__title { font-weight: 500; }
+.my-bid__meta { margin: var(--s-1) 0 0; color: var(--muted); font-size: var(--fs-xs); }
+.my-bid__stats { margin: 0; display: grid; gap: var(--s-1); font-size: var(--fs-sm); }
+.my-bid__stats div { display: flex; justify-content: space-between; gap: var(--s-3); }
+.my-bid__stats dt { color: var(--muted); }
+.my-bid__stats dd { margin: 0; font-variant-numeric: tabular-nums; }
+.my-bid__status { text-align: right; }
+.my-bid__badge--won { background: var(--accent); color: var(--accent-ink); }
+.my-bid__badge--outbid, .my-bid__badge--lost { color: var(--danger); border-color: var(--danger); }
+@media (max-width: 640px) { .my-bid { grid-template-columns: 1fr; } .my-bid__status { text-align: left; } }
