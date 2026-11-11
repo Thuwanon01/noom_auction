@@ -50,5 +50,4 @@ Rails.application.routes.draw do
   get    "register", to: "registrations#new",     as: :register
   post   "register", to: "registrations#create"
   get "design",   to: "design#index"
-
 end

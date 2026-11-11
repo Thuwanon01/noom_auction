@@ -5,11 +5,7 @@ require "application_system_test_case"
 class EnglishBiddingJsTest < JsSystemTestCase
   setup do
     @auction = auctions(:english)
-    visit login_path
-    fill_in "email", with: users(:buyer).email
-    fill_in "password", with: "password123"
-    click_button "Login"
-    assert_no_current_path login_path
+    sign_in_as users(:buyer)
     visit auction_path(@auction)
   end
 
