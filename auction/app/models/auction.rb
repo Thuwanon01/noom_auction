@@ -20,6 +20,9 @@ class Auction < ApplicationRecord
   validates :extension_count, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   before_validation { self.current_price ||= start_price }
+  after_commit :schedule_close, if: -> { open? && saved_change_to_stop_at? }
+
+  scope :overdue, ->(now = Time.current) { open.where(stop_at: ..now) }
 
   def live?(now = Time.current)
     open? && start_at <= now && now < stop_at
@@ -63,6 +66,10 @@ class Auction < ApplicationRecord
   end
 
   private
+
+  def schedule_close
+    CloseAuctionJob.set(wait_until: stop_at).perform_later(id)
+  end
 
   def dutch_interval = drop_interval_minutes.to_i.minutes
 
