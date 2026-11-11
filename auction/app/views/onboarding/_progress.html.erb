@@ -1,0 +1,11 @@
+<nav class="wizard__progress" aria-label="ความคืบหน้า">
+  <p class="wizard__count">ขั้นที่ <%= step %>/<%= User::ONBOARDING_STEPS %> · <%= OnboardingController::STEP_TITLES[step] %></p>
+  <ol class="wizard__bar">
+    <% OnboardingController::STEP_TITLES.each do |n, title| %>
+      <li class="wizard__seg <%= "wizard__seg--done" if n < step %> <%= "wizard__seg--on" if n == step %>"
+          <%= "aria-current=step" if n == step %>>
+        <span class="wizard__seg-label"><%= title %></span>
+      </li>
+    <% end %>
+  </ol>
+</nav>
