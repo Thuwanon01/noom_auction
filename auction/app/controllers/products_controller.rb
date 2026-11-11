@@ -1,13 +1,12 @@
 class ProductsController < ApplicationController
   before_action :require_login
   before_action :require_onboarded, except: :index
-  before_action :set_product, only: %i[step update_step]
+  before_action :set_product, only: %i[step update_step destroy]
   before_action :require_editable, only: %i[step update_step]
   before_action :require_reachable_step, only: :step
 
-  # Replaced by the real list in M2.7 (#24); kept as the placeholder until then.
   def index
-    @products = current_user.products.order(:code)
+    @products = current_user.products.includes(:auction).order(id: :desc)
   end
 
   def new
@@ -53,6 +52,17 @@ class ProductsController < ApplicationController
       redirect_to step_product_path(@product, @step + 1)
     else
       render :step, status: :unprocessable_entity
+    end
+  end
+
+  # Only drafts can be deleted; everything else has been (or is being) reviewed or auctioned.
+  def destroy
+    return redirect_to(my_products_path, alert: "ลบได้เฉพาะสินค้าแบบร่าง") unless @product.draft?
+
+    if @product.destroy
+      redirect_to my_products_path, notice: "ลบสินค้า #{@product.code} แล้ว"
+    else
+      redirect_to my_products_path, alert: @product.errors.full_messages.to_sentence
     end
   end
 
