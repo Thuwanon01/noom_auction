@@ -13,6 +13,7 @@ class User < ApplicationRecord
   }.freeze
 
   has_secure_password
+  has_many :credit_scores, dependent: :destroy
 
   normalizes :email, with: ->(email) { email.strip.downcase }
   # Users often type "1-2345-67890-12-3" or "081-234-5678".
