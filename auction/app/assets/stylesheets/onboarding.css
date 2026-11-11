@@ -17,3 +17,10 @@
   .wizard { padding-top: var(--s-4); }
   .wizard__seg-label { display: none; }
 }
+
+/* Step 1 */
+.field-inline { display: grid; grid-template-columns: 1fr auto; gap: var(--s-2); }
+.check { display: grid; grid-template-columns: auto 1fr; gap: var(--s-2); align-items: start; font-size: var(--fs-sm); color: var(--ink-2); }
+.check input { margin-top: 4px; }
+.otp-ok { margin: 0; color: var(--ok); font-size: var(--fs-sm); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
