@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_11_081051) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_082000) do
   create_table "credit_scores", force: :cascade do |t|
     t.integer "user_id", null: false
     t.json "inputs", null: false
@@ -52,6 +52,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_081051) do
     t.datetime "updated_at", null: false
     t.string "email"
     t.string "password_digest"
+    t.string "name"
+    t.boolean "admin", default: false, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["national_id"], name: "index_users_on_national_id", unique: true
     t.index ["phone"], name: "index_users_on_phone", unique: true
