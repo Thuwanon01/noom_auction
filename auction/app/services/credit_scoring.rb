@@ -93,9 +93,15 @@ class CreditScoring
   # Scores the user's saved Step 2 data, keeps an audit row, and copies the
   # latest score and grade onto the user. Returns the Result.
   def self.score_user!(user, version: CURRENT_VERSION)
-    result = call(occupation: user.occupation, annual_income: user.annual_income,
-                  years_experience: user.years_experience, version: version)
+    record!(user, score_for(user, version: version))
+  end
 
+  def self.score_for(user, version: CURRENT_VERSION)
+    call(occupation: user.occupation, annual_income: user.annual_income,
+         years_experience: user.years_experience, version: version)
+  end
+
+  def self.record!(user, result)
     user.transaction do
       user.credit_scores.create!(score: result.score, grade: result.grade, breakdown: result.breakdown,
                                  inputs: result.inputs, model_version: result.model_version)

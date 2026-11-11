@@ -24,3 +24,13 @@
 .check input { margin-top: 4px; }
 .otp-ok { margin: 0; color: var(--ok); font-size: var(--fs-sm); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Step 3 */
+.scoring { display: grid; justify-items: center; gap: var(--s-2); padding: var(--s-7) var(--s-4); border: 1px solid var(--line); border-radius: var(--radius); text-align: center; }
+.scoring__title { margin: 0; font-size: var(--fs-lg); font-weight: 400; }
+.scoring__note { margin: 0; color: var(--muted); font-size: var(--fs-sm); }
+.scoring--error { border-color: var(--danger); }
+.scoring--error .scoring__title { color: var(--danger); }
+.scoring__spinner { width: 28px; height: 28px; border: 2px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: scoring-spin 0.8s linear infinite; }
+@keyframes scoring-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .scoring__spinner { animation-duration: 3s; } }
