@@ -38,17 +38,17 @@ class Product < ApplicationRecord
     "new" => "ใหม่", "like_new" => "เหมือนใหม่", "good" => "สภาพดี", "fair" => "พอใช้", "for_parts" => "สำหรับอะไหล่"
   }.freeze
 
-  # Statuses where the seller may still edit the listing.
-  EDITABLE_STATUSES = %w[draft rejected].freeze
-
-  # M3: statuses whose auction must not be shown in the public catalog.
-  PRIVATE_STATUSES = %w[draft pending_review rejected withdrawn].freeze
-
-  # M3: placeholder cover until the product has photos.
+  # Placeholder cover until the catalog shows the product photos (M3 uses a category emoji).
   CATEGORY_EMOJI = {
     "camera" => "📷", "watch" => "⌚", "musical_instrument" => "🎸", "it" => "💻", "sports" => "🚲",
     "collectible" => "🏺", "furniture" => "🪑", "art" => "🖼️", "vehicle" => "🏍️", "other" => "📦"
   }.freeze
+
+  # Statuses whose auction must not be shown in the public catalog (M3). Everything from in_event on is public.
+  PRIVATE_STATUSES = %w[draft pending_review rejected withdrawn].freeze
+
+  # Statuses where the seller may still edit the listing.
+  EDITABLE_STATUSES = %w[draft rejected].freeze
 
   enum :category, CATEGORIES.index_by(&:itself)
   enum :condition, %w[new like_new good fair for_parts].index_by(&:itself), prefix: true
@@ -113,6 +113,7 @@ class Product < ApplicationRecord
   def status_label   = STATUS_LABELS[status]
   def category_label = CATEGORY_LABELS[category]
   def condition_label = CONDITION_LABELS[condition]
+
   def emoji = CATEGORY_EMOJI.fetch(category, "📦")
 
   def proof_required?

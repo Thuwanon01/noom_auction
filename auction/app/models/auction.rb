@@ -70,6 +70,36 @@ class Auction < ApplicationRecord
     open? && start_at <= now && now < stop_at
   end
 
+  def phase(now = Time.current)
+    return "ended" if !open? || now >= stop_at
+    return "upcoming" if now < start_at
+    "live"
+  end
+
+  def upcoming?(now = Time.current) = phase(now) == "upcoming"
+  def ended?(now = Time.current) = phase(now) == "ended"
+
+  # The price shown in the catalog. Sealed bids are secret, so it stays at the start price.
+  def listed_price = sealed? ? start_price : current_price
+
+  def bid_count = bids.size
+
+  def next_min_bid
+    case auction_type
+    when "english" then current_price + bid_increment
+    when "dutch"   then current_price
+    else start_price
+    end
+  end
+
+  # Winning amount once ended, or nil for "ไม่มีผู้ชนะ" (reserve not met, no bids, or closed without a winner).
+  def winning_price
+    return if no_winner? || unsold? || cancelled?
+    top = bids.ranked.first
+    return if top.nil? || (reserve_price && top.amount < reserve_price)
+    top.amount
+  end
+
   # Dutch: start price minus one drop per full interval since start_at,
   # never below the floor (spec §3.1).
   def dutch_price_at(time)
@@ -108,36 +138,6 @@ class Auction < ApplicationRecord
 
     update!(stop_at: stop_at + ANTI_SNIPING_EXTENSION, extension_count: extension_count + 1)
     true
-  end
-
-  def phase(now = Time.current)
-    return "ended" if !open? || now >= stop_at
-    return "upcoming" if now < start_at
-    "live"
-  end
-
-  def upcoming?(now = Time.current) = phase(now) == "upcoming"
-  def ended?(now = Time.current) = phase(now) == "ended"
-
-  # The price shown in the catalog. Sealed bids are secret, so it stays at the start price.
-  def listed_price = sealed? ? start_price : current_price
-
-  def bid_count = bids.size
-
-  def next_min_bid
-    case auction_type
-    when "english" then current_price + bid_increment
-    when "dutch"   then current_price
-    else start_price
-    end
-  end
-
-  # Winning amount once ended, or nil for "ไม่มีผู้ชนะ" (reserve not met, no bids, or closed without a winner).
-  def winning_price
-    return if no_winner? || unsold? || cancelled?
-    top = bids.ranked.first
-    return if top.nil? || (reserve_price && top.amount < reserve_price)
-    top.amount
   end
 
   private
