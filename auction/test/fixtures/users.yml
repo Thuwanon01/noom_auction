@@ -50,3 +50,10 @@ newbie:
   email: newbie@example.com
   password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
   onboarding_status: not_started
+
+seller_as_buyer_a:
+  name: Anan GradeA
+  email: grade-a@example.com
+  onboarding_status: completed
+  credit_score: 800
+  credit_grade: A
