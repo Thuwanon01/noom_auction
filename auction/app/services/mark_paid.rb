@@ -10,8 +10,7 @@ class MarkPaid
       next :not_pending unless auction.sold?
       next :payment_expired if now >= auction.payment_due_at
 
-      auction.update!(paid_at: now)
-      auction.product.update!(status: "sold")
+      auction.update!(paid_at: now) # product is already "sold" since award!
       :paid
     end
   end

@@ -13,7 +13,7 @@ class CloseAuctionTest < ActiveSupport::TestCase
 
   def close(now: @after) = CloseAuction.call(@auction, now: now)
 
-  test "highest bid at or above reserve wins; product pending payment" do
+  test "highest bid at or above reserve wins; product sold (payment pending on the auction)" do
     bid(users(:other_buyer), 1_500)
     bid(users(:buyer), 2_000)
     assert_equal :sold, close
@@ -22,7 +22,7 @@ class CloseAuctionTest < ActiveSupport::TestCase
     assert_equal users(:buyer), @auction.winner
     assert_equal 2_000, @auction.current_price
     assert_equal @after, @auction.closed_at
-    assert_equal "pending_payment", @auction.product.status
+    assert_equal "sold", @auction.product.status
   end
 
   test "no reserve: any highest bid wins" do

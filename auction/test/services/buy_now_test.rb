@@ -20,7 +20,7 @@ class BuyNowTest < ActiveSupport::TestCase
     assert_equal @buyer, @auction.winner
     assert_equal 9_000, @auction.current_price
     assert_equal @now, @auction.closed_at
-    assert_equal "pending_payment", @auction.product.reload.status
+    assert_equal "sold", @auction.product.reload.status
   end
 
   test "uses the server price, never the client price" do
