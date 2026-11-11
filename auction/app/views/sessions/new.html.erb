@@ -1,0 +1,14 @@
+<% content_for :title, "เข้าสู่ระบบ · Noom Auction" %>
+<main class="auth">
+  <div class="auth__box">
+    <%= link_to root_path, class: "auth__brand" do %>Noom <span>Auction</span><% end %>
+    <h1 class="auth__title">เข้าสู่ระบบ</h1>
+    <p class="auth__sub">ใช้บัญชีของคุณเพื่อเข้าร่วมประมูล</p>
+    <form class="form" onsubmit="return false">
+      <label class="field"><span class="field__label">Email</span><input class="input" type="email" placeholder="you@example.com"></label>
+      <label class="field"><span class="field__label">Password</span><input class="input" type="password"></label>
+      <button class="btn btn--primary btn--block" type="submit">Login</button>
+    </form>
+    <p class="auth__alt">ยังไม่มีบัญชี? <%= link_to "สมัครสมาชิก", register_path %></p>
+  </div>
+</main>

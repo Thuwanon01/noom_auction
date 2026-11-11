@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>Event list</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.pg{font-family:'Kanit',system-ui,sans-serif;font-weight:300;color:#111;background:#fff;display:flex;flex-wrap:wrap;min-height:100%}
+.side{width:220px;box-sizing:border-box;padding:24px 16px;border-right:1px solid #e8e8e8;flex:0 0 220px}
+.nav{display:block;padding:8px 12px;border-radius:6px;color:#444;font-size:14px;text-decoration:none}
+.nav.on{background:#fafafa;color:#111;font-weight:500;box-shadow:inset 2px 0 0 #111}
+.main{flex:999 1 560px;min-width:0;padding:24px 32px 48px}
+.btn{padding:9px 18px;border-radius:6px;border:1px solid #111;background:#fff;color:#111;font:400 14px 'Kanit',sans-serif;text-decoration:none;display:inline-block;text-align:center}
+.btn.p{background:#111;color:#fff}.btn.g{border-color:#cfcfcf}
+.chip{padding:5px 12px;border-radius:999px;border:1px solid #cfcfcf;font-size:14px;color:#444}
+.chip.on{background:#111;color:#fff;border-color:#111}
+.sel{padding:7px 12px;border-radius:6px;border:1px solid #cfcfcf;font:300 14px 'Kanit',sans-serif;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px}
+.card{border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.img{position:relative;aspect-ratio:4/3;background:#fafafa;border-bottom:1px solid #e8e8e8;display:grid;place-items:center}
+.bdg{position:absolute;top:12px;left:12px;padding:2px 10px;border-radius:999px;background:#fff;border:1px solid #cfcfcf;font-size:12px}
+.cd{position:absolute;right:12px;bottom:12px;padding:2px 10px;border-radius:999px;background:#fff;border:1px solid #e8e8e8;font-size:12px}
+.tag{padding:1px 8px;border-radius:4px;border:1px solid #cfcfcf;font-size:12px}
+.bd{padding:16px}
+.dt{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 0;margin:8px 0 16px;border-top:1px solid #e8e8e8;font-size:14px}
+.dt small{display:block;color:#6b6b6b;font-size:12px}
+</style>
+</helmet>
+<div class="pg">
+  <aside class="side">
+    <div style="font-size:20px;font-weight:500;margin-bottom:32px">Noom <span style="font-weight:300;color:#6b6b6b">Auction</span></div>
+    <div style="font-size:12px;color:#6b6b6b;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">เมนู</div>
+    <a class="nav on" href="EventList.dc.html">Event</a>
+    <a class="nav" href="EventList.dc.html">My Event</a>
+    <a class="nav" href="EventList.dc.html">My Product</a>
+    <a class="nav" href="RegisterProduct.dc.html">Register Product</a>
+    <p style="font-size:12px;color:#6b6b6b;margin:24px 0 0">My Event, My Product และ Register Product ต้อง login ก่อนใช้งาน</p>
+  </aside>
+  <main class="main">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:24px;border-bottom:1px solid #e8e8e8;margin-bottom:24px">
+      <div><h1 style="margin:0;font-weight:500;font-size:28px">Event</h1><p style="margin:2px 0 0;color:#6b6b6b">รายการสินค้าที่เปิดประมูล</p></div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <a class="btn p" href="CreateEvent.dc.html">+ Create Event</a>
+        <a href="Login.dc.html" aria-label="บัญชีผู้ใช้" style="width:38px;height:38px;border:1px solid #cfcfcf;border-radius:50%;display:grid;place-items:center;color:#111;text-decoration:none">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+        </a>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:24px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="chip on">ทั้งหมด 12</span><span class="chip">กำลังประมูล 5</span><span class="chip">เร็วๆ นี้ 3</span><span class="chip">จบแล้ว 4</span>
+      </div>
+      <div style="display:flex;gap:16px;align-items:center;font-size:14px;color:#6b6b6b">
+        <span>ช่วงราคา <select class="sel"><option>ทุกราคา</option></select></span>
+        <span>เรียงตาม <select class="sel"><option>ใกล้ปิดก่อน</option></select></span>
+      </div>
+    </div>
+    <div class="grid">
+      <sc-for list="{{items}}" as="a" hint-placeholder-count="6">
+        <article class="card">
+          <div class="img">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#bdbdbd" stroke-width="1" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="M21 16l-5-5-8 8"/></svg>
+            <span class="bdg" style="{{a.badgeStyle}}">{{a.status}}</span>
+            <span class="cd" style="{{a.cdStyle}}">{{a.left}}</span>
+          </div>
+          <div class="bd">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6b6b6b"><span>{{a.product}}</span><span class="tag">{{a.type}}</span></div>
+            <h3 style="margin:4px 0 12px;font-size:16px;font-weight:500">{{a.title}}</h3>
+            <div style="font-size:12px;color:#6b6b6b">{{a.priceLabel}}</div>
+            <div style="font-size:20px;font-weight:500">{{a.price}}</div>
+            <div class="dt"><div><small>เริ่ม</small>{{a.start}}</div><div><small>ปิด</small>{{a.stop}}</div></div>
+            <a class="btn btn-b" href="AuctionDetail.dc.html" style="{{a.btnStyle}}">{{a.cta}}</a>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+    <div style="display:flex;justify-content:center;gap:8px;margin-top:32px;font-size:14px">
+      <span style="min-width:36px;text-align:center;padding:6px 12px;border-radius:6px;background:#111;color:#fff">1</span>
+      <span style="min-width:36px;text-align:center;padding:6px 12px;border-radius:6px;border:1px solid #e8e8e8">2</span>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":980}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const live = { s: 'กำลังประมูล', b: 'color:#1f7a4d;border-color:#1f7a4d' };
+    const up = { s: 'เร็วๆ นี้', b: 'color:#b45309;border-color:#b45309' };
+    const end = { s: 'จบแล้ว', b: 'color:#6b6b6b' };
+    const solid = 'width:100%;box-sizing:border-box;background:#111;color:#fff';
+    const ghost = 'width:100%;box-sizing:border-box;border-color:#cfcfcf';
+    const mk = (st, o) => ({ status: st.s, badgeStyle: st.b, cdStyle: o.urgent ? 'color:#b42318;border-color:#b42318' : '', left: o.left,
+      product: o.product, type: o.type, title: o.title, priceLabel: o.pl, price: o.price, start: o.start, stop: o.stop,
+      btnStyle: st === live ? solid : ghost, cta: st === live ? 'ประมูลเลย' : 'ดูรายละเอียด' });
+    return { items: [
+      mk(live, { urgent: true, left: 'ปิดในอีก 5 ชม.', product: 'กล้อง', type: 'ประมูลขึ้นราคา', title: 'กล้องฟิล์ม Nikon FM2', pl: 'ราคาล่าสุด', price: '฿4,500', start: '9 พ.ย. 13:00', stop: '11 พ.ย. 18:00' }),
+      mk(live, { urgent: true, left: 'ปิดในอีก 8 ชม.', product: 'ไอที', type: 'ประมูลขึ้นราคา', title: 'หูฟังมือสอง สภาพดี', pl: 'ราคาล่าสุด', price: '฿850', start: '11 พ.ย. 09:00', stop: '11 พ.ย. 21:00' }),
+      mk(live, { left: 'ปิดในอีก 1 วัน', product: 'นาฬิกา', type: 'ประมูลขึ้นราคา', title: 'นาฬิกา Seiko 5 วินเทจ', pl: 'ราคาล่าสุด', price: '฿3,200', start: '10 พ.ย. 13:00', stop: '12 พ.ย. 13:00' }),
+      mk(live, { left: 'ปิดในอีก 2 วัน', product: 'เครื่องดนตรี', type: 'ประมูลลดราคา', title: 'กีตาร์โปร่ง Yamaha F310', pl: 'ราคาล่าสุด', price: '฿2,800', start: '11 พ.ย. 10:00', stop: '13 พ.ย. 13:00' }),
+      mk(up, { left: 'เริ่มในอีก 1 วัน', product: 'กีฬา', type: 'ประมูลขึ้นราคา', title: 'จักรยานไฮบริด มือสอง', pl: 'ราคาเริ่มต้น', price: '฿6,900', start: '12 พ.ย. 13:00', stop: '15 พ.ย. 13:00' }),
+      mk(end, { left: 'ปิดประมูลแล้ว', product: 'ของสะสม', type: 'ประมูลขึ้นราคา', title: 'พระเครื่องเก่า (มีใบรับรอง)', pl: 'ราคาปิด', price: '฿25,000', start: '6 พ.ย. 13:00', stop: '10 พ.ย. 13:00' })
+    ] };
+  }
+}
+</script>
+</body>
+</html>

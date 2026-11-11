@@ -12,5 +12,12 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
 
-  resources :auctions, only: :index
+  resources :auctions, only: %i[index show]
+  resources :events, only: :new
+  resources :products, only: :new
+  get "my/events",   to: "events#index",   as: :my_events
+  get "my/products", to: "products#index", as: :my_products
+  get "login",    to: "sessions#new",       as: :login
+  get "register", to: "registrations#new",  as: :register
+  get "design",   to: "design#index"
 end

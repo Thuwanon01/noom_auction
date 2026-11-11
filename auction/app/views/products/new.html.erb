@@ -1,0 +1,25 @@
+<% content_for :title, "ลงทะเบียนสินค้า · Noom Auction" %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :register_product %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <h1 class="shop__title">Register Product</h1>
+        <p class="shop__subtitle">ลงทะเบียนสินค้าเพื่อนำไปเปิดประมูล</p>
+      </div>
+      <div class="shop__actions"><%= render "shared/profile" %></div>
+    </header>
+    <form class="form" onsubmit="return false">
+      <label class="field"><span class="field__label">ชื่อสินค้า</span><input class="input" type="text"></label>
+      <label class="field"><span class="field__label">ประเภทสินค้า</span>
+        <select><option>เลือกประเภท</option><option>กล้อง</option><option>นาฬิกา</option><option>เครื่องดนตรี</option><option>ของสะสม</option></select>
+      </label>
+      <label class="field"><span class="field__label">รายละเอียดสินค้า</span><textarea></textarea></label>
+      <div class="field"><span class="field__label">รูปสินค้า</span><div class="dropzone">ลากรูปมาวาง หรือคลิกเพื่อเลือกไฟล์</div></div>
+      <div class="form__actions">
+        <%= link_to "ยกเลิก", my_products_path, class: "btn btn--ghost" %>
+        <button class="btn btn--primary" type="submit">Submit</button>
+      </div>
+    </form>
+  </main>
+</div>

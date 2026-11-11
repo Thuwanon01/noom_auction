@@ -1,0 +1,113 @@
+<% content_for :title, "Design System · Noom Auction" %>
+<% colors = [
+  ["bg", "--bg", "#ffffff"], ["surface", "--surface", "#fafafa"], ["ink / accent", "--ink", "#111111"],
+  ["ink-2", "--ink-2", "#444444"], ["muted", "--muted", "#8a8a8a"], ["line", "--line", "#e8e8e8"],
+  ["line-strong", "--line-strong", "#cfcfcf"], ["ok", "--ok", "#1f7a4d"], ["warn", "--warn", "#b45309"], ["danger", "--danger", "#b42318"]
+] %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :design %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <h1 class="shop__title">Design System</h1>
+        <p class="shop__subtitle">Minimal theme · ขาว ดำ เส้นบาง ไม่มีเงา ไม่มี gradient</p>
+      </div>
+    </header>
+
+    <section class="ds-section">
+      <h2 class="section-title" style="margin-top:0">Color</h2>
+      <div class="ds-swatches">
+        <% colors.each do |name, var, hex| %>
+          <div class="ds-swatch"><i style="background:var(<%= var %>)"></i><b><%= name %></b><code><%= var %> <%= hex %></code></div>
+        <% end %>
+      </div>
+      <p class="ds-spec">สีเน้นมีสีเดียวคือ ink; เขียว/ส้ม/แดง ใช้เฉพาะสถานะ (live / upcoming / urgent)</p>
+    </section>
+
+    <section class="ds-section">
+      <h2 class="section-title">Typography — Kanit</h2>
+      <p style="font-size:var(--fs-2xl);font-weight:500;margin:0">2xl 2.25rem · ราคา ฿99,000</p>
+      <p style="font-size:var(--fs-xl);font-weight:500;margin:0">xl 1.75rem · หัวข้อหน้า</p>
+      <p style="font-size:var(--fs-lg);margin:0">lg 1.25rem · หัวข้อส่วน</p>
+      <p style="margin:0">md 1rem · เนื้อหาปกติ (น้ำหนัก 300)</p>
+      <p style="font-size:var(--fs-sm);margin:0">sm 0.875rem · ฟอร์ม ตาราง ปุ่ม</p>
+      <p style="font-size:var(--fs-xs);color:var(--muted);margin:0">xs 0.75rem · label เล็ก</p>
+    </section>
+
+    <section class="ds-section">
+      <h2 class="section-title">Spacing &amp; Shape</h2>
+      <div class="ds-row">
+        <% [4, 8, 12, 16, 24, 32, 48].each do |n| %>
+          <div style="text-align:center;font-size:var(--fs-xs);color:var(--muted)"><div style="width:<%= n %>px;height:<%= n %>px;background:var(--ink)"></div><%= n %></div>
+        <% end %>
+      </div>
+      <p class="ds-spec">radius 6px · pill 999px (chip/badge) · border 1px hairline</p>
+    </section>
+
+    <section class="ds-section">
+      <h2 class="section-title">Buttons</h2>
+      <div class="ds-row">
+        <button class="btn btn--primary">Primary</button>
+        <button class="btn">Default</button>
+        <button class="btn btn--ghost">Ghost</button>
+      </div>
+    </section>
+
+    <section class="ds-section">
+      <h2 class="section-title">Badge · Tag · Chip</h2>
+      <div class="ds-row">
+        <span class="badge badge--static badge--live">กำลังประมูล</span>
+        <span class="badge badge--static badge--upcoming">เร็วๆ นี้</span>
+        <span class="badge badge--static badge--ended">จบแล้ว</span>
+        <span class="tag">ประมูลขึ้นราคา</span>
+        <span class="chip chip--on">ทั้งหมด <span class="chip__count">12</span></span>
+        <span class="chip">กำลังประมูล <span class="chip__count">5</span></span>
+      </div>
+    </section>
+
+    <section class="ds-section">
+      <h2 class="section-title">Form</h2>
+      <div class="form">
+        <label class="field"><span class="field__label">Label</span><input class="input" placeholder="Placeholder"><span class="field__hint">Hint text</span></label>
+        <label class="field"><span class="field__label">Select</span><select><option>ตัวเลือก 1</option></select></label>
+      </div>
+    </section>
+
+    <section class="ds-section">
+      <h2 class="section-title">Card</h2>
+      <div class="grid" style="max-width:520px">
+        <article class="card">
+          <div class="card__image"><span class="card__emoji">📷</span><span class="badge badge--live">กำลังประมูล</span><span class="countdown">ปิดในอีก 5 ชม.</span></div>
+          <div class="card__body">
+            <p class="card__meta"><span>กล้อง</span><span class="tag">ประมูลขึ้นราคา</span></p>
+            <h3 class="card__title">กล้องฟิล์ม Nikon FM2</h3>
+            <p class="card__price-label">ราคาล่าสุด</p><p class="card__price">฿4,500</p>
+            <a href="#" class="btn btn--primary btn--block">ประมูลเลย</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="ds-section">
+      <h2 class="section-title">Table</h2>
+      <table class="table">
+        <thead><tr><th>#</th><th>User</th><th class="num">ราคา</th></tr></thead>
+        <tbody><tr class="is-top"><td>3</td><td>cc</td><td class="num">฿500</td></tr><tr><td>2</td><td>bb</td><td class="num">฿200</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="ds-section">
+      <h2 class="section-title">Pages</h2>
+      <div class="ds-row">
+        <%= link_to "Event list", auctions_path, class: "btn btn--ghost" %>
+        <%= link_to "Auction detail + bid", auction_path(1), class: "btn btn--ghost" %>
+        <%= link_to "Create Event", new_event_path, class: "btn btn--ghost" %>
+        <%= link_to "My Event", my_events_path, class: "btn btn--ghost" %>
+        <%= link_to "Register Product", new_product_path, class: "btn btn--ghost" %>
+        <%= link_to "My Product", my_products_path, class: "btn btn--ghost" %>
+        <%= link_to "Login", login_path, class: "btn btn--ghost" %>
+        <%= link_to "Register", register_path, class: "btn btn--ghost" %>
+      </div>
+    </section>
+  </main>
+</div>

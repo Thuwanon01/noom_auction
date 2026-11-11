@@ -1,0 +1,11 @@
+<aside class="shop__menu">
+  <%= link_to root_path, class: "shop__brand" do %>Noom <span>Auction</span><% end %>
+  <p class="shop__menu-label">เมนู</p>
+  <nav class="shop__nav">
+    <%= link_to "Event", auctions_path, class: ["shop__nav-link", ("shop__nav-link--on" if active == :events)] %>
+    <%= link_to "My Event", my_events_path, class: ["shop__nav-link", ("shop__nav-link--on" if active == :my_events)] %>
+    <%= link_to "My Product", my_products_path, class: ["shop__nav-link", ("shop__nav-link--on" if active == :my_products)] %>
+    <%= link_to "Register Product", new_product_path, class: ["shop__nav-link", ("shop__nav-link--on" if active == :register_product)] %>
+  </nav>
+  <p class="shop__menu-note">My Event, My Product และ Register Product ต้อง login ก่อนใช้งาน</p>
+</aside>
