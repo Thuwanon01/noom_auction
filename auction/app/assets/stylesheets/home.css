@@ -6,6 +6,7 @@
   --gold: #f5b942;
   --rose: #ef6f8b;
   --teal: #3cc6b4;
+  --violet: #8b7cf6;
   --card: rgba(255, 255, 255, 0.06);
   --card-border: rgba(255, 255, 255, 0.12);
 }
@@ -107,6 +108,7 @@ body {
 .member--gold { --accent: var(--gold); }
 .member--rose { --accent: var(--rose); }
 .member--teal { --accent: var(--teal); }
+.member--violet { --accent: var(--violet); }
 
 .member:hover {
   transform: translateY(-6px);
