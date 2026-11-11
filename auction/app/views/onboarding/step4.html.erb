@@ -1,5 +1,57 @@
-<%= render layout: "onboarding/shell", locals: { step: 4, title: OnboardingController::STEP_TITLES[4] } do %>
-  <%= form_with url: onboarding_step_path(4), method: :post, class: "form" do |f| %>
+<% score = @user.latest_credit_score %>
+<%= render layout: "onboarding/shell", locals: { step: 4, title: OnboardingController::STEP_TITLES[4],
+                                                 subtitle: "ตรวจสอบข้อมูลก่อนยืนยัน" } do %>
+  <section class="result" aria-labelledby="result-title">
+    <h2 id="result-title" class="visually-hidden">คะแนนเครดิต</h2>
+    <%= render "onboarding/gauge", score: @user.credit_score %>
+    <p class="result__grade">เกรด <strong><%= grade_label(@user.credit_grade) %></strong></p>
+  </section>
+
+  <% if score %>
+    <details class="breakdown" open>
+      <summary>How we calculated this</summary>
+      <dl class="facts">
+        <div><dt>คะแนนตั้งต้น</dt><dd>300</dd></div>
+        <div><dt>อาชีพ</dt><dd>+<%= score.breakdown["occupation"] %></dd></div>
+        <div><dt>รายได้ต่อปี</dt><dd>+<%= score.breakdown["income"] %></dd></div>
+        <div><dt>ประสบการณ์ทำงาน</dt><dd>+<%= score.breakdown["experience"] %></dd></div>
+        <div class="breakdown__total"><dt>รวม</dt><dd><%= score.score %></dd></div>
+      </dl>
+      <p class="field__hint">โมเดล <%= score.model_version %></p>
+    </details>
+  <% end %>
+
+  <h2 class="summary__title">ข้อมูลที่กรอก</h2>
+  <dl class="summary">
+    <div>
+      <dt>เลขบัตรประชาชน</dt><dd><%= mask_national_id(@user.national_id) %></dd>
+      <dd class="summary__edit"><%= link_to "Edit", onboarding_step_path(1) %></dd>
+    </div>
+    <div>
+      <dt>เบอร์มือถือ</dt><dd><%= mask_phone(@user.phone) %></dd>
+      <dd class="summary__edit"><%= link_to "Edit", onboarding_step_path(1) %></dd>
+    </div>
+    <div>
+      <dt>อาชีพ</dt><dd><%= @user.occupation_label %></dd>
+      <dd class="summary__edit"><%= link_to "Edit", onboarding_step_path(2) %></dd>
+    </div>
+    <div>
+      <dt>รายได้ต่อปี</dt><dd>฿<%= annual_income_field_value(@user) %></dd>
+      <dd class="summary__edit"><%= link_to "Edit", onboarding_step_path(2) %></dd>
+    </div>
+    <div>
+      <dt>ประสบการณ์ทำงาน</dt><dd><%= years_label(@user.years_experience) %></dd>
+      <dd class="summary__edit"><%= link_to "Edit", onboarding_step_path(2) %></dd>
+    </div>
+  </dl>
+  <p class="field__hint">แก้ไขข้อมูลแล้วระบบจะคำนวณคะแนนใหม่</p>
+
+  <%= form_with model: @user, scope: :user, url: onboarding_step_path(4), method: :post, class: "form summary__form" do |f| %>
+    <label class="check">
+      <%= f.check_box :confirm_truth, required: true %>
+      <span>I confirm the information is true · ฉันยืนยันว่าข้อมูลทั้งหมดเป็นความจริง</span>
+    </label>
+    <%= render "onboarding/field_error", record: @user, attribute: :confirm_truth %>
     <div class="form__actions">
       <%= link_to "ย้อนกลับ", onboarding_step_path(2), class: "btn btn--ghost" %>
       <%= f.button "ยืนยัน", class: "btn btn--primary" %>

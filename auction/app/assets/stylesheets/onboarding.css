@@ -34,3 +34,29 @@
 .scoring__spinner { width: 28px; height: 28px; border: 2px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: scoring-spin 0.8s linear infinite; }
 @keyframes scoring-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .scoring__spinner { animation-duration: 3s; } }
+
+/* Step 4 */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.result { display: grid; justify-items: center; margin: var(--s-5) 0; }
+.gauge { width: 100%; max-width: 280px; }
+.gauge__track, .gauge__value { fill: none; stroke-width: 14; stroke-linecap: round; }
+.gauge__track { stroke: var(--line); }
+.gauge__value { stroke: var(--ink); }
+.gauge__score { font-family: var(--font); font-size: 40px; font-weight: 500; fill: var(--ink); }
+.gauge__range { font-family: var(--font); font-size: 10px; fill: var(--muted); }
+.result__grade { margin: var(--s-2) 0 0; font-size: var(--fs-lg); }
+.result__grade strong { font-weight: 500; }
+
+.breakdown { margin-bottom: var(--s-5); }
+.breakdown summary { cursor: pointer; font-size: var(--fs-sm); font-weight: 400; margin-bottom: var(--s-2); }
+.breakdown .facts { margin-bottom: var(--s-2); }
+.breakdown dd { font-variant-numeric: tabular-nums; }
+.breakdown__total dt, .breakdown__total dd { color: var(--ink) !important; font-weight: 500; }
+
+.summary__title { font-size: var(--fs-md); margin: 0 0 var(--s-2); }
+.summary { margin: 0 0 var(--s-2); border-top: 1px solid var(--line); }
+.summary div { display: grid; grid-template-columns: 1fr auto auto; gap: var(--s-4); padding: var(--s-3) 0; border-bottom: 1px solid var(--line); font-size: var(--fs-sm); align-items: baseline; }
+.summary dt { color: var(--muted); }
+.summary dd { margin: 0; text-align: right; }
+.summary__edit a { font-size: var(--fs-xs); }
+.summary__form { margin-top: var(--s-5); }

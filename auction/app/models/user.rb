@@ -57,6 +57,11 @@ class User < ApplicationRecord
   }
   validate :experience_fits_age
 
+  # Step 4: confirm
+  attribute :confirm_truth, :boolean
+  validate :truth_must_be_confirmed, on: :confirm
+  validates :credit_score, :credit_grade, presence: true, on: :confirm
+
   # Changing the phone number means it has to be verified again.
   before_save :reset_phone_verification, if: -> { will_save_change_to_phone? && !will_save_change_to_phone_verified_at? }
 
@@ -98,6 +103,10 @@ class User < ApplicationRecord
     (on.strftime("%Y%m%d").to_i - birth_date.strftime("%Y%m%d").to_i) / 10_000
   end
 
+  def latest_credit_score
+    credit_scores.order(:created_at, :id).last
+  end
+
   def occupation_label
     OCCUPATIONS[occupation]
   end
@@ -120,6 +129,10 @@ class User < ApplicationRecord
     return if years_experience <= [ age - MIN_WORKING_AGE, 0 ].max
 
     errors.add(:years_experience, :too_long, message: "Years of experience does not match your age")
+  end
+
+  def truth_must_be_confirmed
+    errors.add(:confirm_truth, :accepted, message: "Please confirm that the information is true") unless confirm_truth
   end
 
   def reset_phone_verification
