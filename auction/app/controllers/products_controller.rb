@@ -28,6 +28,7 @@ class ProductsController < ApplicationController
 
   def step
     @step = params[:step].to_i
+    @auction = @product.auction || @product.build_auction if @step == 3
   end
 
   def update_step
@@ -38,6 +39,10 @@ class ProductsController < ApplicationController
       saved = @product.save(context: :step1)
     when 2
       saved = @product.valid?(:step2) # files are uploaded one by one; Next only checks they are complete
+    when 3
+      @auction = @product.auction || @product.build_auction
+      @auction.assign_attributes(auction_params)
+      saved = @auction.save(context: :seller_setup)
     else
       return render_unknown_step
     end
@@ -70,6 +75,11 @@ class ProductsController < ApplicationController
 
   def render_unknown_step
     head :not_found
+  end
+
+  def auction_params
+    params.expect(auction: %i[auction_type start_price reserve_price bid_increment floor_price price_drop
+                              drop_interval_minutes start_at stop_at])
   end
 
   def step1_params

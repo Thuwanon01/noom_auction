@@ -1,4 +1,6 @@
 class Auction < ApplicationRecord
+  include AuctionSellerSetup
+
   # Anti-sniping (spec §2.7, open point 3): a bid inside the window pushes
   # stop_at back by EXTENSION, at most MAX_EXTENSIONS times.
   ANTI_SNIPING_WINDOW = 2.minutes
