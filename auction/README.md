@@ -12,9 +12,7 @@ bin/dev                   # or: bin/rails server
 Seeds create a completed seller (`seller@example.com`) and an admin (`admin@example.com`, development only).
 Real login is not built yet (M1.2, #8), so use the temporary dev sign-in (development and test only):
 
-```bash
-curl -c /tmp/jar -X POST localhost:3000/dev/login -d user_id=1   # or open /dev/login/<user id> in the browser
-```
+Open `http://localhost:3000/dev/login/<user id>` in the browser.
 
 Find ids with `bin/rails runner 'puts User.pluck(:id, :email)'`.
 
