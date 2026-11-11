@@ -5,6 +5,8 @@ class Auction < ApplicationRecord
   ANTI_SNIPING_EXTENSION = 2.minutes
   MAX_EXTENSIONS = 10
 
+  PAYMENT_WINDOW = 48.hours
+
   MONEY_FIELDS = %i[start_price reserve_price bid_increment floor_price price_drop current_price].freeze
 
   enum :auction_type, %w[english dutch sealed].index_by(&:itself)
@@ -23,6 +25,7 @@ class Auction < ApplicationRecord
   after_commit :schedule_close, if: -> { open? && saved_change_to_stop_at? }
 
   scope :overdue, ->(now = Time.current) { open.where(stop_at: ..now) }
+  scope :payment_overdue, ->(now = Time.current) { sold.where(paid_at: nil, payment_due_at: ..now) }
 
   def live?(now = Time.current)
     open? && start_at <= now && now < stop_at
@@ -50,10 +53,12 @@ class Auction < ApplicationRecord
     viewer ? scope.where(user: viewer) : scope.none
   end
 
-  # Close with a winner. Call with the row locked.
+  # Close with a winner. Call with the row locked. The winner has
+  # PAYMENT_WINDOW to pay before ExpirePaymentJob cancels the sale.
   def award!(winner:, price:, now:)
-    update!(status: :sold, winner: winner, current_price: price, closed_at: now)
+    update!(status: :sold, winner: winner, current_price: price, closed_at: now, payment_due_at: now + PAYMENT_WINDOW)
     product.update!(status: "pending_payment")
+    ExpirePaymentJob.set(wait_until: payment_due_at).perform_later(id)
   end
 
   # Call with the row locked. Returns true when stop_at was pushed back.
