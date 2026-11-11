@@ -103,6 +103,11 @@ class User < ApplicationRecord
     (on.strftime("%Y%m%d").to_i - birth_date.strftime("%Y%m%d").to_i) / 10_000
   end
 
+  # Logged-in pages that need a finished profile use OnboardingGate#require_onboarded.
+  def onboarded?
+    completed?
+  end
+
   def latest_credit_score
     credit_scores.order(:created_at, :id).last
   end

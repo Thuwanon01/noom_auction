@@ -74,7 +74,7 @@ class OnboardingController < ApplicationController
   private
 
   def redirect_completed_user
-    redirect_to auctions_path if current_user.completed?
+    redirect_to auctions_path if current_user.onboarded?
   end
 
   def set_step
