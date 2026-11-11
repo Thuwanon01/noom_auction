@@ -1,0 +1,27 @@
+<%# Sealed bid form (M4.8). One amount per user; submitting again before
+    stop_at revises it. Only the viewer's own bid is ever rendered here. %>
+<% mine = @bids.find { |b| b.user_id == current_user&.id } %>
+<% limit = current_user && BidPolicy.bid_limit_for(current_user) %>
+<% if mine %>
+  <p class="action-area__note">ราคาที่คุณเสนอ <strong data-testid="my-sealed-bid"><%= baht(mine.amount) %></strong> · แก้ไขได้จนถึง <%= thai_datetime(auction.stop_at) %></p>
+<% end %>
+<%= form_with url: auction_bids_path(auction), class: "bid-box__form", aria: { label: "ยื่นซองประมูล" }, html: { novalidate: true },
+      data: { controller: "bid-form", action: "submit->bid-form#confirm turbo:submit-end->bid-form#submitEnd turbo:fetch-request-error->bid-form#networkError",
+              bid_form_title_value: auction.product.name, bid_form_min_value: auction.start_price, bid_form_limit_value: limit,
+              bid_form_confirm_value: "Submit a sealed bid of %{amount}?" } do %>
+  <%= hidden_field_tag :idempotency_key, SecureRandom.uuid, id: nil %>
+  <%= number_field_tag :amount, @bid_amount, min: auction.start_price, step: 1, required: true, inputmode: "numeric",
+        class: "input", placeholder: number_with_delimiter(auction.start_price), aria: { label: "ราคาที่เสนอ" }, data: { bid_form_target: "amount" } %>
+  <button class="btn btn--primary" type="submit" data-turbo-submits-with="กำลังส่ง…"><%= mine ? "แก้ไขราคา" : "ยื่นซอง" %></button>
+
+  <p class="bid-flash bid-flash--error" role="alert" data-bid-form-target="error" <%= "hidden" unless @bid_error %>><%= @bid_error %></p>
+  <p class="bid-box__note">ขั้นต่ำ <%= baht(auction.start_price) %> · ราคาของผู้อื่นจะเปิดเผยเมื่อปิดประมูล · ถอนซองไม่ได้<%= " · วงเงินของคุณ #{baht(limit)}" if limit %></p>
+
+  <dialog class="confirm-dialog" data-bid-form-target="dialog" aria-labelledby="confirm-sealed-text">
+    <p id="confirm-sealed-text" data-bid-form-target="message"></p>
+    <div class="confirm-dialog__actions">
+      <button type="button" class="btn btn--ghost" data-action="bid-form#cancel">Cancel</button>
+      <button type="button" class="btn btn--primary" data-action="bid-form#accept">Confirm</button>
+    </div>
+  </dialog>
+<% end %>

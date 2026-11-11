@@ -4,7 +4,10 @@ import { Controller } from "@hotwired/stimulus"
 // The server re-checks everything; this only saves a round trip.
 export default class extends Controller {
   static targets = ["amount", "dialog", "message", "error"]
-  static values = { title: String, min: Number, limit: Number }
+  static values = {
+    title: String, min: Number, limit: Number,
+    confirm: { type: String, default: "Bid %{amount} on %{title}? A bid cannot be withdrawn." }
+  }
 
   fill({ params: { amount } }) {
     this.amountTarget.value = amount
@@ -24,7 +27,9 @@ export default class extends Controller {
     }
 
     this.hideError()
-    this.messageTarget.textContent = `Bid ${this.baht(amount)} on ${this.titleValue}? A bid cannot be withdrawn.`
+    this.messageTarget.textContent = this.confirmValue
+      .replace("%{amount}", this.baht(amount))
+      .replace("%{title}", this.titleValue)
     this.dialogTarget.showModal()
   }
 

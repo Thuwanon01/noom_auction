@@ -12,7 +12,7 @@
   <% when :complete_profile %>
     <%= link_to "Complete your profile to bid", register_path, class: "btn btn--primary btn--block" %>
   <% when :bid_form %>
-    <%= render auction.dutch? ? "auctions/buy_now_form" : "auctions/bid_form", auction: auction %>
+    <%= render "auctions/#{{ "dutch" => "buy_now_form", "sealed" => "sealed_form" }.fetch(auction.auction_type, "bid_form")}", auction: auction %>
   <% when :highest_bidder %>
     <p class="action-area__note">You are the highest bidder</p>
     <p class="bid-box__note">เสนอราคาได้อีกครั้งเมื่อมีผู้เสนอราคาสูงกว่า</p>
