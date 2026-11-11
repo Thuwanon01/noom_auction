@@ -1,14 +1,71 @@
-# Draft: UI only, no persistence yet.
 class ProductsController < ApplicationController
+  before_action :require_login
+  before_action :require_onboarded, except: :index
+  before_action :set_product, only: %i[step update_step]
+  before_action :require_editable, only: %i[step update_step]
+  before_action :require_reachable_step, only: :step
+
+  # Replaced by the real list in M2.7 (#24); kept as the placeholder until then.
   def index
-    @products = [
-      { code: "P-0001", name: "กล้องฟิล์ม Nikon FM2", category: "กล้อง",  status: "in_event" },
-      { code: "P-0002", name: "นาฬิกา Seiko 5 วินเทจ", category: "นาฬิกา", status: "available" },
-      { code: "P-0003", name: "กีตาร์โปร่ง Yamaha F310", category: "เครื่องดนตรี", status: "sold" }
-    ]
-    @status_labels = { "available" => "พร้อมประมูล", "in_event" => "อยู่ในอีเวนต์", "sold" => "ขายแล้ว" }
+    @products = current_user.products.order(:code)
   end
 
   def new
+    @product = Product.new
+    @step = 1
+    render :step
+  end
+
+  def create
+    @product = current_user.products.new(step1_params)
+    @step = 1
+    if @product.save(context: :step1)
+      redirect_to step_product_path(@product, 2)
+    else
+      render :step, status: :unprocessable_entity
+    end
+  end
+
+  def step
+    @step = params[:step].to_i
+  end
+
+  def update_step
+    @step = params[:step].to_i
+    return render_unknown_step unless @step == 1
+
+    @product.assign_attributes(step1_params)
+    if @product.save(context: :step1)
+      redirect_to step_product_path(@product, 2)
+    else
+      render :step, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def set_product
+    @product = current_user.products.find(params[:id])
+  end
+
+  def require_editable
+    return if @product.editable?
+
+    redirect_to my_products_path, alert: "สินค้านี้แก้ไขไม่ได้ในสถานะ #{@product.status_label}"
+  end
+
+  def require_reachable_step
+    step = params[:step].to_i
+    return if @product.can_open_step?(step)
+
+    redirect_to step_product_path(@product, @product.next_incomplete_step), alert: "กรุณากรอกขั้นตอนก่อนหน้าให้ครบ"
+  end
+
+  def render_unknown_step
+    head :not_found
+  end
+
+  def step1_params
+    params.expect(product: %i[name category condition description brand model year])
   end
 end

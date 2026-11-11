@@ -23,6 +23,9 @@ module ActiveSupport
 end
 
 module SignInHelper
+  # M2 tests were written with this name; it is the real login now.
+  def login_as(user) = sign_in_as(user)
+
   # Every fixture user has the password "password123".
   def sign_in_as(user, password: "password123")
     post login_path, params: { email: user.email, password: password }

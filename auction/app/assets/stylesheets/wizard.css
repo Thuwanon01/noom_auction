@@ -1,0 +1,11 @@
+/* Seller wizard (products). Uses tokens from design_system.css. */
+.wizard-progress { margin-bottom: var(--s-5); }
+.wizard-progress__count { margin: 0 0 var(--s-2); color: var(--muted); font-size: var(--fs-sm); }
+.wizard-progress__steps { display: flex; gap: var(--s-2); list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+.wizard-progress__step { flex: 1; min-width: 120px; padding-top: var(--s-2); border-top: 3px solid var(--line); font-size: var(--fs-sm); color: var(--muted); }
+.wizard-progress__step--done { border-top-color: var(--ink-2); }
+.wizard-progress__step--on { border-top-color: var(--ink); color: var(--ink); font-weight: 500; }
+.wizard-progress__step a { color: inherit; }
+.flash--alert { border-color: var(--danger); color: var(--danger); }
+.flash--notice { border-color: var(--ok); color: var(--ok); }
+.form-errors { margin: 0; padding: var(--s-3) var(--s-5); border: 1px solid var(--danger); border-radius: var(--radius); color: var(--danger); font-size: var(--fs-sm); }

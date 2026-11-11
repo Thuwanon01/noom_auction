@@ -16,7 +16,7 @@
       <thead><tr><th>รหัส</th><th>ชื่อสินค้า</th><th>ประเภท</th><th>สถานะ</th></tr></thead>
       <tbody>
         <% @products.each do |p| %>
-          <tr><td><%= p[:code] %></td><td><%= p[:name] %></td><td><%= p[:category] %></td><td><span class="tag"><%= @status_labels[p[:status]] %></span></td></tr>
+          <tr><td><%= p.code %></td><td><%= p.name %></td><td><%= p.category_label %></td><td><span class="tag"><%= p.status_label %></span></td></tr>
         <% end %>
       </tbody>
     </table>

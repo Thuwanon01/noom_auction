@@ -1,6 +1,8 @@
 # M2.1 (#18) data + M2.2 (#19) lifecycle. Step validations (contexts :step1..:step3, :submit) are in
 # Product::Wizard (M2.3+).
 class Product < ApplicationRecord
+  include ProductWizard
+
   class InvalidTransition < StandardError; end
 
   CATEGORIES = %w[camera watch musical_instrument it sports collectible furniture art vehicle other].freeze
