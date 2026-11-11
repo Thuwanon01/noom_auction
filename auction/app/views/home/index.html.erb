@@ -1,2 +1,41 @@
-<h1>Noom Auction</h1>
-<p>Rails <%= Rails::VERSION::STRING %> is running.</p>
+<% content_for :title, "Noom Auction" %>
+<% content_for :head do %>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<% end %>
+
+<% members = [
+  { name: "หนุ่ม", en: "Noom", color: "gold" },
+  { name: "ปัน",   en: "Pun",  color: "rose" },
+  { name: "เฟิส",  en: "First", color: "teal" }
+] %>
+
+<main class="home">
+  <section class="hero">
+    <div class="hero__badge">🔨 Agile Team Project</div>
+    <h1 class="hero__title">
+      <span class="hero__title-main">Noom</span>
+      <span class="hero__title-accent">Auction</span>
+    </h1>
+    <p class="hero__tagline">ประมูลง่าย ได้ของถูกใจ ราคาโปร่งใส</p>
+    <div class="hero__divider"></div>
+  </section>
+
+  <section class="team">
+    <h2 class="team__heading">สมาชิกในทีม</h2>
+    <div class="team__grid">
+      <% members.each do |m| %>
+        <article class="member member--<%= m[:color] %>">
+          <div class="member__avatar"><%= m[:name].first %></div>
+          <h3 class="member__name"><%= m[:name] %></h3>
+          <p class="member__en"><%= m[:en] %></p>
+        </article>
+      <% end %>
+    </div>
+  </section>
+
+  <footer class="home__footer">
+    © <%= Date.current.year %> Noom Auction
+  </footer>
+</main>
