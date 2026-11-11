@@ -92,6 +92,7 @@ class BuyNowRaceTest < ActiveSupport::TestCase
   self.use_transactional_tests = false
 
   teardown do
+    Notification.delete_all
     Bid.delete_all
     auctions(:dutch).update_columns(status: "open", winner_id: nil, closed_at: nil, current_price: 10_000)
     products(:watch).update_columns(status: "live")

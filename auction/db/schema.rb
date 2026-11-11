@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_11_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_100000) do
   create_table "auctions", force: :cascade do |t|
     t.integer "product_id", null: false
     t.string "auction_type", null: false
@@ -50,6 +50,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_090000) do
     t.index ["user_id"], name: "index_bids_on_user_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "kind", null: false
+    t.integer "auction_id"
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auction_id"], name: "index_notifications_on_auction_id"
+    t.index ["user_id", "read_at", "created_at"], name: "index_notifications_on_user_id_and_read_at_and_created_at"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "code", null: false
     t.integer "seller_id", null: false
@@ -79,5 +90,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_090000) do
   add_foreign_key "auctions", "users", column: "winner_id"
   add_foreign_key "bids", "auctions"
   add_foreign_key "bids", "users"
+  add_foreign_key "notifications", "auctions"
+  add_foreign_key "notifications", "users"
   add_foreign_key "products", "users", column: "seller_id"
 end

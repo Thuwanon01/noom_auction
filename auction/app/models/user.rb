@@ -4,6 +4,7 @@ class User < ApplicationRecord
 
   has_many :products, foreign_key: :seller_id, inverse_of: :seller, dependent: :restrict_with_exception
   has_many :bids, dependent: :restrict_with_exception
+  has_many :notifications, dependent: :destroy
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true

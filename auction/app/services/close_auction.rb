@@ -33,6 +33,7 @@ class CloseAuction
   def self.finish(auction, status, now)
     auction.update!(status: status, closed_at: now)
     auction.product.update!(status: "available")
+    Notify.auction_closed(auction)
     status
   end
   private_class_method :finish

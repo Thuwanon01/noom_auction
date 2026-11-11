@@ -58,6 +58,7 @@ class Auction < ApplicationRecord
   def award!(winner:, price:, now:)
     update!(status: :sold, winner: winner, current_price: price, closed_at: now, payment_due_at: now + PAYMENT_WINDOW)
     product.update!(status: "pending_payment")
+    Notify.auction_closed(self)
     ExpirePaymentJob.set(wait_until: payment_due_at).perform_later(id)
   end
 
