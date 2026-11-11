@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   get "my/events",   to: "events#index",   as: :my_events
   get "my/products", to: "products#index", as: :my_products
   get "my/bids",     to: "my_bids#index",  as: :my_bids
+  get "my/notifications", to: "notifications#index", as: :my_notifications
   get    "login",    to: "sessions#new",          as: :login
   post   "login",    to: "sessions#create"
   delete "logout",   to: "sessions#destroy",      as: :logout

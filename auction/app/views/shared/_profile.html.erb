@@ -1,3 +1,10 @@
+<%# Notification bell (M4.12): unread count for the signed-in user. %>
+<% if current_user %>
+  <% unread = current_user.notifications.unread.count %>
+  <%= link_to my_notifications_path, class: "notif-bell", aria: { label: unread.positive? ? "การแจ้งเตือน ยังไม่ได้อ่าน #{unread} รายการ" : "การแจ้งเตือน" } do %>
+    <span aria-hidden="true">🔔</span><% if unread.positive? %><span class="notif-bell__count"><%= unread > 99 ? "99+" : unread %></span><% end %>
+  <% end %>
+<% end %>
 <details class="profile">
   <summary class="profile__avatar" aria-label="บัญชีผู้ใช้">👤</summary>
   <div class="profile__menu">
