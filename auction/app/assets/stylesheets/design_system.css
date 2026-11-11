@@ -263,3 +263,15 @@ textarea { resize: vertical; min-height: 96px; }
   .detail { grid-template-columns: 1fr; }
   .field-row { grid-template-columns: 1fr; }
 }
+
+/* M4.4 bid form */
+.quick-bids { grid-column: 1 / -1; display: flex; gap: var(--s-2); flex-wrap: wrap; }
+.quick-bid { cursor: pointer; font-variant-numeric: tabular-nums; }
+.bid-flash { grid-column: 1 / -1; margin: 0; padding: var(--s-2) var(--s-3); border-radius: var(--radius); font-size: var(--fs-sm); }
+.bid-flash--success { background: var(--surface); border: 1px solid var(--line-strong); }
+.bid-flash--error { color: var(--danger); border: 1px solid var(--danger); }
+.bid-box__form .bid-box__note { grid-column: 1 / -1; }
+.confirm-dialog { max-width: 360px; padding: var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--radius); }
+.confirm-dialog::backdrop { background: rgb(0 0 0 / 0.4); }
+.confirm-dialog p { margin: 0 0 var(--s-4); }
+.confirm-dialog__actions { display: flex; justify-content: flex-end; gap: var(--s-2); }

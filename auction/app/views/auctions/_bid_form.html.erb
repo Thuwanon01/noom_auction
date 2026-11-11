@@ -1,0 +1,32 @@
+<%# English bid form (M4.4). Works as a plain POST; bid_form_controller adds
+    the quick buttons, client-side checks and the confirm dialog. %>
+<% minimum = auction.next_min_bid %>
+<% limit = current_user && BidPolicy.bid_limit_for(current_user) %>
+<%= form_with url: auction_bids_path(auction), class: "bid-box__form", aria: { label: "เสนอราคา" }, html: { novalidate: true },
+      data: { controller: "bid-form", action: "submit->bid-form#confirm turbo:submit-end->bid-form#submitEnd turbo:fetch-request-error->bid-form#networkError",
+              bid_form_title_value: auction.product.name, bid_form_min_value: minimum, bid_form_limit_value: limit } do %>
+  <%= hidden_field_tag :idempotency_key, SecureRandom.uuid, id: nil %>
+  <%= hidden_field_tag :expected_price, auction.current_price, id: nil %>
+
+  <div class="quick-bids">
+    <% [ 1, 2, 5 ].each do |times| %>
+      <% amount = auction.current_price + auction.bid_increment * times %>
+      <button type="button" class="chip quick-bid" data-action="bid-form#fill" data-bid-form-amount-param="<%= amount %>"><%= baht(amount) %></button>
+    <% end %>
+  </div>
+
+  <%= number_field_tag :amount, @bid_amount, min: minimum, step: 1, required: true, inputmode: "numeric",
+        class: "input", placeholder: number_with_delimiter(minimum), aria: { label: "ราคาที่เสนอ" }, data: { bid_form_target: "amount" } %>
+  <button class="btn btn--primary" type="submit" data-turbo-submits-with="กำลังส่ง…">เสนอราคา</button>
+
+  <p class="bid-flash bid-flash--error" role="alert" data-bid-form-target="error" <%= "hidden" unless @bid_error %>><%= @bid_error %></p>
+  <p class="bid-box__note">ขั้นต่ำ <%= baht(minimum) %><%= " · วงเงินของคุณ #{baht(limit)}" if limit %></p>
+
+  <dialog class="confirm-dialog" data-bid-form-target="dialog" aria-labelledby="confirm-bid-text">
+    <p id="confirm-bid-text" data-bid-form-target="message"></p>
+    <div class="confirm-dialog__actions">
+      <button type="button" class="btn btn--ghost" data-action="bid-form#cancel">Cancel</button>
+      <button type="button" class="btn btn--primary" data-action="bid-form#accept">Confirm</button>
+    </div>
+  </dialog>
+<% end %>

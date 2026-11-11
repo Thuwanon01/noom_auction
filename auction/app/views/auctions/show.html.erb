@@ -14,7 +14,7 @@
     </header>
 
     <div class="detail">
-      <%= render "gallery", product: product %>
+      <%= render "auctions/gallery", product: product %>
 
       <div>
         <p class="detail__badges">
@@ -30,12 +30,12 @@
           <div><dt>ปิด</dt><dd><%= thai_datetime(a.stop_at) %></dd></div>
         </dl>
 
-        <%= render "price_box", auction: a, phase: phase %>
-        <%= render "action_area", auction: a, state: @action_state %>
+        <%= render "auctions/price_box", auction: a, phase: phase %>
+        <%= render "auctions/action_area", auction: a, state: @action_state %>
       </div>
     </div>
 
-    <%= render "description", product: product %>
-    <%= render "bid_history", auction: a, bids: @bids, now: @now %>
+    <%= render "auctions/description", product: product %>
+    <%= render "auctions/bid_history", auction: a, bids: @bids, now: @now %>
   </main>
 </div>
