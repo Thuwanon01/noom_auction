@@ -38,6 +38,15 @@ class Auction < ApplicationRecord
     start_at + (dutch_drops_at(time) + 1) * dutch_interval
   end
 
+  # Bid history the viewer may see (spec §4.5, §6). Sealed amounts stay
+  # hidden until close: a bidder sees only their own bid, others see none.
+  def bids_visible_to(viewer)
+    scope = bids.order(placed_at: :desc, id: :desc)
+    return scope unless sealed? && open?
+
+    viewer ? scope.where(user: viewer) : scope.none
+  end
+
   # Close with a winner. Call with the row locked.
   def award!(winner:, price:, now:)
     update!(status: :sold, winner: winner, current_price: price, closed_at: now)
