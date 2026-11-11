@@ -7,22 +7,23 @@ class Product < ApplicationRecord
   # Categories where the seller must upload proof of authenticity (M2.4).
   PROOF_REQUIRED_CATEGORIES = %w[collectible vehicle].freeze
 
-  # draft -> pending_review -> available -> in_event -> sold, with the side exits from the spec.
-  # in_event -> available covers "unsold" (reserve not met / no bids); sold -> available covers a sale
-  # cancelled after the 48-hour payment window (biddingFlow.md section 5).
+  # draft -> pending_review -> available -> in_event -> pending_payment -> sold, with the side exits from the spec.
+  # in_event -> available covers "unsold" (reserve not met / no bids). pending_payment is the 48-hour window after
+  # an auction closes with a winner (M4.10/M4.11): paid -> sold, not paid -> back to available.
   TRANSITIONS = {
-    "draft"          => %w[pending_review],
-    "pending_review" => %w[available rejected],
-    "rejected"       => %w[pending_review],
-    "available"      => %w[in_event withdrawn],
-    "in_event"       => %w[sold available],
-    "sold"           => %w[available],
-    "withdrawn"      => []
+    "draft"           => %w[pending_review],
+    "pending_review"  => %w[available rejected],
+    "rejected"        => %w[pending_review],
+    "available"       => %w[in_event withdrawn],
+    "in_event"        => %w[pending_payment available],
+    "pending_payment" => %w[sold available],
+    "sold"            => [],
+    "withdrawn"       => []
   }.freeze
 
   STATUS_LABELS = {
     "draft" => "แบบร่าง", "pending_review" => "รอตรวจสอบ", "rejected" => "ไม่ผ่าน",
-    "available" => "พร้อมประมูล", "in_event" => "อยู่ในอีเวนต์", "sold" => "ขายแล้ว", "withdrawn" => "ถอนออกแล้ว"
+    "available" => "พร้อมประมูล", "in_event" => "อยู่ในอีเวนต์", "pending_payment" => "รอชำระเงิน", "sold" => "ขายแล้ว", "withdrawn" => "ถอนออกแล้ว"
   }.freeze
 
   CATEGORY_LABELS = {
@@ -93,6 +94,7 @@ class Product < ApplicationRecord
   end
   def withdraw!      = transition_to!(:withdrawn)
   def start_event!   = transition_to!(:in_event)
+  def await_payment! = transition_to!(:pending_payment)
   def mark_sold!     = transition_to!(:sold)
   def return_to_available! = transition_to!(:available)
 

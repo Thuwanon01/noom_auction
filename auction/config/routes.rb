@@ -17,7 +17,15 @@ Rails.application.routes.draw do
   resources :products, only: :new
   get "my/events",   to: "events#index",   as: :my_events
   get "my/products", to: "products#index", as: :my_products
-  get "login",    to: "sessions#new",       as: :login
-  get "register", to: "registrations#new",  as: :register
+  get    "login",    to: "sessions#new",          as: :login
+  post   "login",    to: "sessions#create"
+  delete "logout",   to: "sessions#destroy",      as: :logout
+  get  "onboarding",       to: "onboarding#index",  as: :onboarding
+  post "onboarding/otp",        to: "onboarding#send_otp",   as: :onboarding_otp
+  post "onboarding/otp/verify", to: "onboarding#verify_otp", as: :verify_onboarding_otp
+  get  "onboarding/:step", to: "onboarding#show",   as: :onboarding_step, constraints: { step: /[1-4]/ }
+  post "onboarding/:step", to: "onboarding#update", constraints: { step: /[1-4]/ }
+  get    "register", to: "registrations#new",     as: :register
+  post   "register", to: "registrations#create"
   get "design",   to: "design#index"
 end
