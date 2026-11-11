@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_11_075811) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_080010) do
   create_table "users", force: :cascade do |t|
     t.string "national_id"
     t.string "phone"
@@ -27,6 +27,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_075811) do
     t.string "onboarding_status", default: "not_started", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "email"
+    t.string "password_digest"
+    t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["national_id"], name: "index_users_on_national_id", unique: true
     t.index ["phone"], name: "index_users_on_phone", unique: true
   end

@@ -11,12 +11,19 @@ class User < ApplicationRecord
     "other"              => "Other"
   }.freeze
 
+  has_secure_password
+
+  normalizes :email, with: ->(email) { email.strip.downcase }
+
   # Deterministic so the unique index and uniqueness validation still work.
   encrypts :national_id, deterministic: true
 
   enum :onboarding_status, ONBOARDING_STATUSES.index_with(&:itself), default: "not_started", validate: true
   enum :occupation, OCCUPATIONS.keys.index_with(&:itself), prefix: true, validate: { allow_nil: true }
 
+  validates :email, presence: true, uniqueness: true,
+                    format: { with: URI::MailTo::EMAIL_REGEXP, allow_blank: true }
+  validates :password, length: { minimum: 8 }, allow_nil: true
   validates :national_id, uniqueness: true, allow_nil: true
   validates :phone, uniqueness: true, allow_nil: true
 
