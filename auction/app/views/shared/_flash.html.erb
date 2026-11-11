@@ -1,0 +1,6 @@
+<% flash.each do |type, message| %>
+  <% next unless message.is_a?(String) %>
+  <%# bid_notice / bid_alert are shown next to the bid form on the auction page (M4). %>
+  <% next if type.to_s.start_with?("bid_") %>
+  <div class="flash flash--<%= type == "alert" ? "alert" : "notice" %>" role="<%= type == "alert" ? "alert" : "status" %>"><%= message %></div>
+<% end %>

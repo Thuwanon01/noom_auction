@@ -1,0 +1,4 @@
+<% messages = record.errors.messages_for(attribute).uniq %>
+<% if messages.any? %>
+  <span class="field__error" id="<%= attribute %>_error" role="alert"><%= messages.first %></span>
+<% end %>

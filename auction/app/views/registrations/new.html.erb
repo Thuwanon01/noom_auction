@@ -4,12 +4,20 @@
     <%= link_to root_path, class: "auth__brand" do %>Noom <span>Auction</span><% end %>
     <h1 class="auth__title">สมัครสมาชิก</h1>
     <p class="auth__sub">สร้างบัญชีใหม่ใน 1 นาที</p>
-    <form class="form" onsubmit="return false">
-      <label class="field"><span class="field__label">Email</span><input class="input" type="email" placeholder="you@example.com"></label>
-      <label class="field"><span class="field__label">Password</span><input class="input" type="password"></label>
-      <label class="field"><span class="field__label">ยืนยัน Password</span><input class="input" type="password"></label>
-      <button class="btn btn--primary btn--block" type="submit">สมัครสมาชิก</button>
-    </form>
+    <%= form_with model: @user, url: register_path, class: "form" do |f| %>
+      <%= render "shared/form_errors", record: @user %>
+      <label class="field"><span class="field__label">Email</span>
+        <%= f.email_field :email, class: "input", placeholder: "you@example.com", required: true, autocomplete: "username", autofocus: true %>
+      </label>
+      <label class="field"><span class="field__label">Password</span>
+        <%= f.password_field :password, class: "input", required: true, minlength: 8, autocomplete: "new-password" %>
+        <span class="field__hint">อย่างน้อย 8 ตัวอักษร</span>
+      </label>
+      <label class="field"><span class="field__label">ยืนยัน Password</span>
+        <%= f.password_field :password_confirmation, class: "input", required: true, autocomplete: "new-password" %>
+      </label>
+      <%= f.button "สมัครสมาชิก", class: "btn btn--primary btn--block" %>
+    <% end %>
     <p class="auth__alt">มีบัญชีแล้ว? <%= link_to "เข้าสู่ระบบ", login_path %></p>
   </div>
 </main>
