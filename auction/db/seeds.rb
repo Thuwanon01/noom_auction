@@ -22,6 +22,31 @@ User.find_or_create_by!(email: "new@example.com") do |u|
   u.password = "password123"
 end
 
+# M3: demo catalog. the 12 auctions that used to be mock data in AuctionsController,
+# covering live, upcoming and ended auctions of all three types.
+# Idempotent: re-running resets each demo auction's times and bids relative to now.
+
+# Both accounts use the password "password123".
+User.find_or_create_by!(email: "done@example.com") do |u|
+  u.password = "password123"
+  u.phone = "0812345678"
+  u.national_id = "1101700203450"
+  u.phone_verified_at = Time.current
+  u.pdpa_consented_at = Time.current
+  u.occupation = "private_employee"
+  u.annual_income = 480_000
+  u.years_experience = 4
+  u.credit_score = 670
+  u.credit_grade = "B"
+  u.score_model_version = "v1-draft"
+  u.confirmed_at = Time.current
+  u.onboarding_status = "completed"
+end
+
+User.find_or_create_by!(email: "new@example.com") do |u|
+  u.password = "password123"
+end
+
 # M3 (#27): demo catalog, the 12 auctions that used to be mock data in
 # AuctionsController (live, upcoming and ended, all three types). Re-running
 # resets each demo auction's times and bids relative to now.

@@ -11,6 +11,15 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
+    # Replace a singleton method for the duration of the block (minitest 6 has no stubs).
+    def with_singleton_stub(object, name, impl)
+      original = object.method(name)
+      object.define_singleton_method(name, &impl)
+      yield
+    ensure
+      object.define_singleton_method(name, original)
+    end
+
     # Temporarily replace a singleton method, e.g. to force CreditScoring to fail.
     # Safe with process-based parallel tests.
     def with_stubbed(object, method_name, implementation)

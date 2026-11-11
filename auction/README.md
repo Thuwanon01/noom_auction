@@ -71,3 +71,33 @@ bin/rails test          # models, services, validators, requests
 bin/rails test:system   # end-to-end onboarding flow (rack_test, no browser needed)
 bin/rubocop
 ```
+
+## Seller flow: listing a product (M2)
+
+Spec: [requirement/productOnboardingFlow.md](../requirement/productOnboardingFlow.md)
+
+```bash
+bin/rails db:prepare      # creates the database and loads demo data (seeds are safe to run again)
+bin/dev
+```
+
+Sign in with a seeded account (`seller@example.com`, or the admin `admin@example.com`; password `password123`) at `/login`. A seller must have finished onboarding.
+
+| Step | Where | What happens |
+|---|---|---|
+| 1 Product info | `/products/new` | creates a `draft` with code `P-0001`... |
+| 2 Photos and proof | `/products/:id/steps/2` | 1-8 JPG/PNG photos, proof for collectibles and vehicles |
+| 3 Auction setup | `/products/:id/steps/3` | English, Dutch or Sealed, prices, times |
+| 4 Review and submit | `/products/:id/steps/4` | submit -> `pending_review`, or save as draft |
+| Admin review | `/admin/products` (admin only) | approve -> `available`, reject with a reason -> `rejected` |
+| My products | `/my/products` | status, continue a draft, resubmit after a rejection |
+
+Status lifecycle: `draft -> pending_review -> available -> in_event -> sold`, with `rejected` (editable, can resubmit)
+and `withdrawn`. An `in_event` product cannot be edited or deleted.
+
+### Tests
+
+```bash
+bin/rails test           # models and full-flow request tests (no browser needed)
+BROWSER_TESTS=1 bin/rails test:system   # adds real-Chrome tests for the upload and auction-setup JavaScript (flaky login, opt-in)
+```
