@@ -17,7 +17,10 @@ Rails.application.routes.draw do
   resources :products, only: :new
   get "my/events",   to: "events#index",   as: :my_events
   get "my/products", to: "products#index", as: :my_products
-  get "login",    to: "sessions#new",       as: :login
-  get "register", to: "registrations#new",  as: :register
+  get    "login",    to: "sessions#new",          as: :login
+  post   "login",    to: "sessions#create"
+  delete "logout",   to: "sessions#destroy",      as: :logout
+  get    "register", to: "registrations#new",     as: :register
+  post   "register", to: "registrations#create"
   get "design",   to: "design#index"
 end

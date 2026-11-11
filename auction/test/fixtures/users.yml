@@ -1,5 +1,7 @@
 # National IDs below pass the Thai checksum. They are test data only.
 completed:
+  email: done@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
   national_id: "1101700203450"
   phone: "0812345678"
   phone_verified_at: <%= 1.day.ago.to_fs(:db) %>
@@ -14,4 +16,6 @@ completed:
   onboarding_status: completed
 
 fresh:
+  email: fresh@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
   onboarding_status: not_started
