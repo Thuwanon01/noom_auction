@@ -30,7 +30,7 @@
     <details class="filter">
       <summary class="filter__toggle">หมวดหมู่<% if search.categories.any? %> <span class="chip__count">(<%= search.categories.size %>)</span><% end %></summary>
       <div class="filter__menu">
-        <% Product::CATEGORIES.each do |key, label| %>
+        <% Product::CATEGORY_LABELS.each do |key, label| %>
           <label class="filter__option">
             <%= check_box_tag "category[]", key, search.categories.include?(key), id: "category_#{key}", form: "catalog-filters", data: { action: "change->catalog#submit" } %>
             <%= label %>

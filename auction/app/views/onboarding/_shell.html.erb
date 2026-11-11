@@ -1,0 +1,13 @@
+<% content_for :title, "#{OnboardingController::STEP_TITLES[step]} · Noom Auction" %>
+<main class="wizard">
+  <div class="wizard__box">
+    <div class="wizard__top">
+      <%= link_to root_path, class: "auth__brand wizard__brand" do %>Noom <span>Auction</span><% end %>
+      <%= button_to "ออกจากระบบ", logout_path, method: :delete, class: "btn btn--ghost wizard__logout" %>
+    </div>
+    <%= render "onboarding/progress", step: step %>
+    <h1 class="wizard__title"><%= title %></h1>
+    <% if local_assigns[:subtitle] %><p class="auth__sub"><%= subtitle %></p><% end %>
+    <%= yield %>
+  </div>
+</main>
