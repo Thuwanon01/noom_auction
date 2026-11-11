@@ -2,7 +2,9 @@
 <% product = a.product %>
 <% phase = a.phase(@now) %>
 <% content_for :title, "#{product.name} · Noom Auction" %>
-<div class="shop">
+<% turbo_refreshes_with method: :morph, scroll: :preserve %>
+<%= turbo_stream_from a %>
+<div class="shop" data-controller="live" data-live-interval-value="15000">
   <%= render "shared/sidebar", active: :events %>
   <main class="shop__main">
     <header class="shop__top">

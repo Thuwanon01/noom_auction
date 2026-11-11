@@ -34,6 +34,10 @@ class Auction < ApplicationRecord
 
   before_validation { self.current_price ||= start_price }
   after_commit :schedule_close, if: -> { open? && saved_change_to_stop_at? }
+  # M4.9: price, extension, Sold and close all re-render open detail pages.
+  # The broadcast is a data-free "refresh"; each browser re-fetches the page
+  # as its own user, so per-viewer and sealed content is never broadcast.
+  after_update_commit :broadcast_refresh_later
 
   scope :overdue, ->(now = Time.current) { open.where(stop_at: ..now) }
   scope :payment_overdue, ->(now = Time.current) { sold.where(paid_at: nil, payment_due_at: ..now) }

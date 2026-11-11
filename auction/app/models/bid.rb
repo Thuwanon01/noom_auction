@@ -7,5 +7,8 @@ class Bid < ApplicationRecord
 
   before_validation { self.placed_at ||= Time.current }
 
+  # M4.9: tell everyone watching the auction to re-render (no data sent).
+  after_commit -> { auction.broadcast_refresh_later }, on: %i[create update]
+
   scope :ranked, -> { order(amount: :desc, placed_at: :asc) }
 end

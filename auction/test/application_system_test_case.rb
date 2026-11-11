@@ -10,6 +10,13 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def sign_in_as(user, password: "password123")
     page.driver.post(login_path, email: user.email, password: password)
   end
+
+  # turbo-rails makes #visit wait until every <turbo-cable-stream-source>
+  # is connected. rack_test runs no JavaScript, so they never connect; only
+  # wait in a real browser.
+  def connect_turbo_cable_stream_sources(...)
+    super unless Capybara.current_driver == :rack_test
+  end
 end
 
 # Real browser for Stimulus behaviour. Skipped where Chrome is not installed.
