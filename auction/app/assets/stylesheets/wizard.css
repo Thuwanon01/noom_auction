@@ -29,3 +29,7 @@
 /* Step 4: review */
 .review { display: flex; flex-direction: column; gap: var(--s-3); }
 .review__edit { margin-left: var(--s-3); font-size: var(--fs-sm); font-weight: 300; }
+
+/* My products */
+.row-actions { display: flex; gap: var(--s-2); justify-content: flex-end; align-items: center; }
+.row-actions form { margin: 0; }

@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
   resources :auctions, only: %i[index show]
   resources :events, only: :new
-  resources :products, only: %i[new create] do
+  resources :products, only: %i[new create destroy] do
     resources :product_images, only: %i[create destroy] do
       patch :reorder, on: :collection
     end
