@@ -14,8 +14,16 @@ class AuctionsController < ApplicationController
     "price_desc" => "ราคาสูง → ต่ำ"
   }.freeze
 
+  TYPES = {
+    "English" => "ประมูลขึ้นราคา",
+    "Dutch"   => "ประมูลลดราคา",
+    "Sealed"  => "ประมูลซองปิด"
+  }.freeze
+
   def index
     items = mock_auctions
+    @counts = items.group_by { |a| a[:status] }.transform_values(&:size)
+    @counts["all"] = items.size
 
     @status = STATUSES.key?(params[:status]) ? params[:status] : nil
     items = items.select { |a| a[:status] == @status } if @status
