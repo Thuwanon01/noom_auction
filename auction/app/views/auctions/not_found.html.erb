@@ -1,0 +1,11 @@
+<% content_for :title, "ไม่พบรายการ · Noom Auction" %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :events %>
+  <main class="shop__main">
+    <div class="empty">
+      <h1 class="shop__title">ไม่พบรายการประมูล</h1>
+      <p>รายการนี้อาจถูกลบหรือไม่มีอยู่</p>
+      <%= link_to "กลับไปหน้ารายการ", auctions_path, class: "btn btn--ghost" %>
+    </div>
+  </main>
+</div>

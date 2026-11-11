@@ -1,0 +1,38 @@
+<%# Action area by viewer and auction state (M3.9). See AuctionActionState. %>
+<div class="action-area" data-state="<%= state %>">
+  <% case state %>
+  <% when :login_to_bid %>
+    <%= link_to "Log in to bid", login_path, class: "btn btn--primary btn--block" %>
+  <% when :login %>
+    <%= link_to "Log in", login_path, class: "btn btn--ghost btn--block" %>
+    <p class="bid-box__note">ยังไม่เปิดให้ประมูล</p>
+  <% when :complete_profile %>
+    <%= link_to "Complete your profile to bid", register_path, class: "btn btn--primary btn--block" %>
+  <% when :bid_form %>
+    <%# Placeholder until the bid form ships in M4.4. %>
+    <form class="bid-box__form" onsubmit="return false" aria-label="เสนอราคา">
+      <input class="input" type="number" min="<%= auction.next_min_bid %>" step="1" placeholder="<%= number_with_delimiter(auction.next_min_bid) %>" aria-label="ราคาที่เสนอ" disabled>
+      <button class="btn btn--primary" type="submit" disabled>เสนอราคา</button>
+    </form>
+    <p class="bid-box__note">ระบบเสนอราคาจะเปิดใช้งานเร็วๆ นี้</p>
+  <% when :remind_me %>
+    <button class="btn btn--ghost btn--block" type="button" disabled>Remind me</button>
+    <p class="bid-box__note">การแจ้งเตือนจะเปิดใช้งานเร็วๆ นี้</p>
+  <% when :own_item %>
+    <p class="action-area__note">This is your item</p>
+  <% when :edit_until_start %>
+    <p class="action-area__note">This is your item</p>
+    <%= link_to "Edit", my_products_path, class: "btn btn--ghost btn--block" %>
+    <p class="bid-box__note">แก้ไขได้จนถึง <%= thai_datetime(auction.start_at) %></p>
+  <% when :result %>
+    <% price = auction.winning_price %>
+    <div class="result">
+      <p class="bid-box__label">ผลการประมูล</p>
+      <% if price %>
+        <p class="result__price">ราคาที่ชนะ <%= baht(price) %></p>
+      <% else %>
+        <p class="result__price">ไม่มีผู้ชนะ</p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

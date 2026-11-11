@@ -3,7 +3,7 @@
 <div class="shop">
   <%= render "shared/sidebar", active: :events %>
 
-  <main class="shop__main">
+  <main class="shop__main" data-controller="catalog">
     <header class="shop__top">
       <div>
         <h1 class="shop__title">Event</h1>
@@ -15,72 +15,37 @@
       </div>
     </header>
 
-    <%= form_with url: auctions_path, method: :get, class: "toolbar", data: { turbo: false } do %>
-      <div class="toolbar__chips">
-        <%= link_to auctions_path(sort: @sort, price: @price), class: ["chip", ("chip--on" if @status.nil?)] do %>
-          ทั้งหมด <span class="chip__count"><%= @counts["all"] %></span>
-        <% end %>
-        <% AuctionsController::STATUSES.each do |key, label| %>
-          <%= link_to auctions_path(status: key, sort: @sort, price: @price), class: ["chip", "chip--#{key}", ("chip--on" if @status == key)] do %>
-            <%= label %> <span class="chip__count"><%= @counts.fetch(key, 0) %></span>
+    <%= form_with url: auctions_path, method: :get, id: "catalog-filters", class: "search", role: "search",
+          data: { turbo_frame: "catalog", turbo_action: "advance", catalog_target: "form", action: "formdata->catalog#compact" } do %>
+      <%= search_field_tag :q, @search.q, class: "input search__input", placeholder: "ค้นหาชื่อสินค้าหรือหมวดหมู่",
+            autocomplete: "off", aria: { label: "ค้นหา" }, data: { catalog_target: "query", action: "input->catalog#search" } %>
+      <%= button_tag "ค้นหา", type: "submit", name: nil, class: "btn btn--ghost" %>
+    <% end %>
+
+    <%= turbo_frame_tag "catalog", data: { turbo_action: "advance", action: "turbo:frame-load->catalog#sync" } do %>
+      <%= render "filters" %>
+
+      <% if @load_error %>
+        <div class="empty empty--error" role="alert">
+          <p>โหลดข้อมูลไม่สำเร็จ</p>
+          <%= link_to "ลองอีกครั้ง", auctions_path(request.query_parameters), class: "btn btn--ghost", data: { turbo_frame: "_top" } %>
+        </div>
+      <% elsif @auctions.empty? %>
+        <div class="empty">
+          <% if @any_auctions %>
+            <p>ไม่พบรายการที่ตรงกับเงื่อนไข</p>
+            <%= link_to "ล้างตัวกรองทั้งหมด", auctions_path(catalog_params(@search, q: nil, status: nil, type: nil, category: nil, price: nil)), class: "btn btn--ghost" %>
+          <% else %>
+            <p>ยังไม่มีรายการประมูล</p>
           <% end %>
-        <% end %>
-      </div>
-      <div class="toolbar__selects">
-        <%= hidden_field_tag :status, @status if @status %>
-        <label class="toolbar__sort">
-          ช่วงราคา
-          <%= select_tag :price,
-                options_for_select(AuctionsController::PRICE_RANGES.map { |k, v| [v[:label], k] }, @price),
-                include_blank: "ทุกราคา", onchange: "this.form.submit()" %>
-        </label>
-        <label class="toolbar__sort">
-          เรียงตาม
-          <%= select_tag :sort, options_for_select(AuctionsController::SORTS.invert, @sort), onchange: "this.form.submit()" %>
-        </label>
-      </div>
-    <% end %>
-
-    <% if @auctions.empty? %>
-      <p class="empty">ไม่พบรายการที่ตรงกับตัวกรอง</p>
-    <% else %>
-      <div class="grid">
-        <% @auctions.each do |a| %>
-          <article class="card card--<%= a[:status] %>">
-            <div class="card__image">
-              <span class="card__emoji" aria-hidden="true"><%= a[:emoji] %></span>
-              <span class="badge badge--<%= a[:status] %>"><%= AuctionsController::STATUSES[a[:status]] %></span>
-              <span class="countdown <%= 'countdown--urgent' if closing_soon?(a) %>"><%= time_left_label(a) %></span>
-            </div>
-            <div class="card__body">
-              <p class="card__meta">
-                <span><%= a[:product] %></span>
-                <span class="tag"><%= auction_type_label(a[:type]) %></span>
-              </p>
-              <h2 class="card__title"><%= a[:title] %></h2>
-              <p class="card__price-label">
-                <%= { "upcoming" => "ราคาเริ่มต้น", "ended" => "ราคาปิด" }.fetch(a[:status], "ราคาล่าสุด") %>
-              </p>
-              <p class="card__price">฿<%= number_with_delimiter(a[:price]) %></p>
-              <dl class="card__dates">
-                <div><dt>เริ่ม</dt><dd><%= thai_datetime(a[:start_at]) %></dd></div>
-                <div><dt>ปิด</dt><dd><%= thai_datetime(a[:stop_at]) %></dd></div>
-              </dl>
-              <%= link_to auction_path(a[:id]), class: "btn btn--block #{a[:status] == 'live' ? 'btn--primary' : 'btn--ghost'}" do %>
-                <%= a[:status] == "live" ? "ประมูลเลย" : "ดูรายละเอียด" %>
-              <% end %>
-            </div>
-          </article>
-        <% end %>
-      </div>
-    <% end %>
-
-    <% if @total_pages > 1 %>
-      <nav class="pager" aria-label="หน้า">
-        <% (1..@total_pages).each do |p| %>
-          <%= link_to p, auctions_path(page: p, status: @status, sort: @sort, price: @price), class: ["pager__link", ("pager__link--on" if p == @page)] %>
-        <% end %>
-      </nav>
+        </div>
+      <% else %>
+        <p class="results-count"><%= number_with_delimiter(@search.total) %> รายการ</p>
+        <div class="grid">
+          <%= render partial: "card", collection: @auctions, as: :auction, locals: { now: @search.now } %>
+        </div>
+        <%= render "pager" %>
+      <% end %>
     <% end %>
   </main>
 </div>
