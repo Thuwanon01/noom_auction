@@ -1,0 +1,18 @@
+<%# Cover plus thumbnails (M3.7). Falls back to the category emoji until photos exist. %>
+<% urls = gallery_urls(product) %>
+<div class="gallery" data-controller="gallery">
+  <% if urls.any? %>
+    <%= image_tag urls.first, alt: product.name, class: "detail__image detail__photo", data: { gallery_target: "cover" } %>
+    <% if urls.size > 1 %>
+      <div class="gallery__thumbs">
+        <% urls.each_with_index do |url, i| %>
+          <button type="button" class="gallery__thumb <%= 'is-on' if i.zero? %>" data-action="gallery#show" data-gallery-url-param="<%= url %>" aria-label="รูปที่ <%= i + 1 %>">
+            <%= image_tag url, alt: "" %>
+          </button>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="detail__image" role="img" aria-label="<%= product.name %>"><span><%= product.emoji %></span></div>
+  <% end %>
+</div>

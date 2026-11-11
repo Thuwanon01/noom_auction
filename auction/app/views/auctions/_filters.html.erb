@@ -1,0 +1,64 @@
+<%# Status tabs, filter controls and active-filter chips (M3.4). Lives inside the "catalog" frame. %>
+<% search = @search %>
+<div class="toolbar">
+  <nav class="toolbar__chips" aria-label="สถานะ">
+    <%= link_to auctions_path(catalog_params(search, status: nil)), class: ["chip", ("chip--on" if search.status.nil?)], aria: { current: ("page" if search.status.nil?) } do %>
+      ทั้งหมด<% unless @load_error %> <span class="chip__count"><%= search.counts["all"] %></span><% end %>
+    <% end %>
+    <% Auction::PHASES.each do |key| %>
+      <%= link_to auctions_path(catalog_params(search, status: key)), class: ["chip", ("chip--on" if search.status == key)], aria: { current: ("page" if search.status == key) } do %>
+        <%= phase_label(key) %><% unless @load_error %> <span class="chip__count"><%= search.counts[key] %></span><% end %>
+      <% end %>
+    <% end %>
+  </nav>
+
+  <div class="toolbar__selects">
+    <%= hidden_field_tag :status, search.status, form: "catalog-filters", id: nil if search.status %>
+
+    <details class="filter">
+      <summary class="filter__toggle">ประเภท<% if search.types.any? %> <span class="chip__count">(<%= search.types.size %>)</span><% end %></summary>
+      <div class="filter__menu">
+        <% Auction.auction_types.each_key do |t| %>
+          <label class="filter__option">
+            <%= check_box_tag "type[]", t, search.types.include?(t), id: "type_#{t}", form: "catalog-filters", data: { action: "change->catalog#submit" } %>
+            <%= auction_type_label(t) %>
+          </label>
+        <% end %>
+      </div>
+    </details>
+
+    <details class="filter">
+      <summary class="filter__toggle">หมวดหมู่<% if search.categories.any? %> <span class="chip__count">(<%= search.categories.size %>)</span><% end %></summary>
+      <div class="filter__menu">
+        <% Product::CATEGORY_LABELS.each do |key, label| %>
+          <label class="filter__option">
+            <%= check_box_tag "category[]", key, search.categories.include?(key), id: "category_#{key}", form: "catalog-filters", data: { action: "change->catalog#submit" } %>
+            <%= label %>
+          </label>
+        <% end %>
+      </div>
+    </details>
+
+    <label class="toolbar__sort">
+      ช่วงราคา
+      <%= select_tag :price, options_for_select(AuctionSearch::PRICE_RANGES.map { |k, v| [ v[:label], k ] }, search.price),
+            include_blank: "ทุกราคา", form: "catalog-filters", data: { action: "change->catalog#submit" } %>
+    </label>
+    <label class="toolbar__sort">
+      เรียงตาม
+      <%= select_tag :sort, options_for_select(AuctionSearch::SORTS.invert, search.sort), form: "catalog-filters", data: { action: "change->catalog#submit" } %>
+    </label>
+  </div>
+</div>
+
+<% chips = catalog_chips(search) %>
+<% if chips.any? %>
+  <div class="active-filters" aria-label="ตัวกรองที่เลือก">
+    <% chips.each do |label, params_without| %>
+      <%= link_to auctions_path(params_without), class: "chip chip--removable", aria: { label: "ลบตัวกรอง #{label}" } do %>
+        <%= label %> <span aria-hidden="true">×</span>
+      <% end %>
+    <% end %>
+    <%= link_to "ล้างทั้งหมด", auctions_path(catalog_params(search, q: nil, status: nil, type: nil, category: nil, price: nil)), class: "active-filters__clear" %>
+  </div>
+<% end %>

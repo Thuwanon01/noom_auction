@@ -1,0 +1,14 @@
+<%# Description (M3.7): brand, model, year, condition, proof of authenticity. %>
+<h2 class="section-title">รายละเอียดสินค้า</h2>
+<% if product.try(:authenticity_proven?) %>
+  <p><span class="tag tag--ok">✓ มีหลักฐานยืนยันความแท้</span></p>
+<% end %>
+<dl class="facts facts--wide">
+  <div><dt>ยี่ห้อ</dt><dd><%= product.brand.presence || "-" %></dd></div>
+  <div><dt>รุ่น</dt><dd><%= product.model.presence || "-" %></dd></div>
+  <div><dt>ปี</dt><dd><%= product.year.presence || "-" %></dd></div>
+  <div><dt>สภาพ</dt><dd><%= product.condition_label.presence || "-" %></dd></div>
+</dl>
+<% if product.description.present? %>
+  <p class="description"><%= simple_format(product.description) %></p>
+<% end %>

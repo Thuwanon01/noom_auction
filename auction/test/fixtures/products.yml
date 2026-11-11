@@ -21,3 +21,12 @@ painting:
   category: art
   condition: good
   status: in_event
+
+draft_item:
+  code: P-0099
+  seller: seller
+  name: Unreviewed Draft Lamp
+  category: other
+  condition: good
+  status: draft
+
