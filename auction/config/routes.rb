@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   resources :auctions, only: %i[index show] do
     resources :bids, only: :create
+    resource :payment, only: :create
   end
   resources :events, only: :new
   resources :products, only: %i[new create destroy] do

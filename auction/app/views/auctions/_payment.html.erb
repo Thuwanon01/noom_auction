@@ -1,0 +1,16 @@
+<%# Payment state after a win (M4.11), only for the seller and the winner. %>
+<% seller = current_user && auction.product.seller_id == current_user.id %>
+<% winner = current_user && auction.winner_id == current_user.id %>
+<% if auction.sold? && (seller || winner) %>
+  <div class="payment">
+    <% if auction.paid_at %>
+      <p class="action-area__note">ชำระเงินแล้ว · <%= thai_datetime(auction.paid_at) %></p>
+    <% elsif winner %>
+      <p class="action-area__note">คุณชนะการประมูล กรุณาชำระเงินภายใน <%= thai_datetime(auction.payment_due_at) %></p>
+    <% else %>
+      <p class="action-area__note">รอผู้ชนะชำระเงินภายใน <%= thai_datetime(auction.payment_due_at) %></p>
+      <%= button_to "ยืนยันว่าได้รับชำระเงินแล้ว", auction_payment_path(auction), class: "btn btn--primary btn--block",
+            form: { data: { turbo_confirm: "ยืนยันว่าได้รับชำระเงินจากผู้ชนะแล้ว?" } } %>
+    <% end %>
+  </div>
+<% end %>
