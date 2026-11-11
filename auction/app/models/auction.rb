@@ -82,10 +82,12 @@ class Auction < ApplicationRecord
   end
 
   # Bid history the viewer may see (spec §4.5, §6). Sealed amounts stay
-  # hidden until close: a bidder sees only their own bid, others see none.
-  def bids_visible_to(viewer)
+  # hidden until the auction ends: a bidder sees only their own bid, others
+  # see none. "Ends" is stop_at (or an earlier close), not the close job,
+  # because no bid can be placed after stop_at anyway.
+  def bids_visible_to(viewer, now = Time.current)
     scope = bids.order(placed_at: :desc, id: :desc)
-    return scope unless sealed? && open?
+    return scope unless sealed? && !ended?(now)
 
     viewer ? scope.where(user: viewer) : scope.none
   end

@@ -9,6 +9,8 @@ module AuctionDetail
     @auction = Auction.publicly_listed.includes(product: :seller).find(id)
     @now = Time.current
     @action_state = AuctionActionState.for(viewer: current_user, auction: @auction, now: @now)
-    @bids = helpers.bid_history_visible?(@auction, current_user, now: @now) ? @auction.bids.includes(:user).order(placed_at: :desc, id: :desc).to_a : []
+    # Single visibility rule (Auction#bids_visible_to): before a sealed auction
+    # ends this holds at most the viewer's own bid, never anyone else's amount.
+    @bids = @auction.bids_visible_to(current_user, @now).includes(:user).to_a
   end
 end

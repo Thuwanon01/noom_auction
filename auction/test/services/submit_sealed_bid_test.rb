@@ -123,3 +123,12 @@ class SealedBidVisibilityTest < ActiveSupport::TestCase
     assert_equal [ b2, b1 ], english.bids_visible_to(nil).to_a
   end
 end
+
+class SealedBidRevealAtStopTest < ActiveSupport::TestCase
+  test "bids are revealed once stop_at has passed, even before the close job runs" do
+    auction = auctions(:sealed)
+    bid = auction.bids.create!(user: users(:other_buyer), amount: 3_000, idempotency_key: "z")
+    assert_empty auction.bids_visible_to(nil)
+    assert_equal [ bid ], auction.bids_visible_to(nil, auction.stop_at).to_a
+  end
+end

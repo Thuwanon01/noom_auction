@@ -4,10 +4,6 @@
 class BidsController < ApplicationController
   include AuctionDetail
 
-  SUCCESS_MESSAGES = {
-    "english" => "You are the highest bidder",
-    "dutch" => "You bought this item for ฿%{price}. Please pay within 48 hours"
-  }.freeze
 
   def create
     return redirect_to(login_path, alert: "Log in to bid") unless current_user
@@ -16,8 +12,7 @@ class BidsController < ApplicationController
     result = place(auction)
 
     if result.success?
-      notice = format(SUCCESS_MESSAGES.fetch(auction.auction_type), price: result.bid.amount.to_fs(:delimited))
-      redirect_to auction_path(auction), notice: notice, status: :see_other
+      redirect_to auction_path(auction), notice: success_message(auction, result), status: :see_other
     else
       load_auction_detail(auction.id)
       @bid_error = result.message
@@ -33,11 +28,23 @@ class BidsController < ApplicationController
 
   def place(auction)
     key = params[:idempotency_key].presence || SecureRandom.uuid
-    if auction.dutch?
+    case auction.auction_type
+    when "dutch"
       BuyNow.call(user: current_user, auction: auction, expected_price: params[:expected_price], idempotency_key: key)
+    when "sealed"
+      SubmitSealedBid.call(user: current_user, auction: auction, amount: params[:amount], idempotency_key: key)
     else
       PlaceBid.call(user: current_user, auction: auction, amount: params[:amount], idempotency_key: key,
                     expected_price: params[:expected_price].presence)
+    end
+  end
+
+  def success_message(auction, result)
+    price = "฿#{result.bid.amount.to_fs(:delimited)}"
+    case auction.auction_type
+    when "dutch" then "You bought this item for #{price}. Please pay within 48 hours"
+    when "sealed" then result.revised? ? "Your sealed bid was changed to #{price}" : "Your sealed bid of #{price} was submitted"
+    else "You are the highest bidder"
     end
   end
 end
