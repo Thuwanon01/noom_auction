@@ -4,16 +4,16 @@
 class BidsController < ApplicationController
   include AuctionDetail
 
+  before_action :require_login
+
   SUCCESS_MESSAGES = { "english" => "You are the highest bidder" }.freeze
 
   def create
-    return redirect_to(login_path, alert: "Log in to bid") unless current_user
-
     auction = Auction.publicly_listed.find(params[:auction_id])
     result = place(auction)
 
     if result.success?
-      redirect_to auction_path(auction), notice: SUCCESS_MESSAGES.fetch(auction.auction_type), status: :see_other
+      redirect_to auction_path(auction), flash: { bid_notice: SUCCESS_MESSAGES.fetch(auction.auction_type) }, status: :see_other
     else
       load_auction_detail(auction.id)
       @bid_error = result.message

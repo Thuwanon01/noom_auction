@@ -56,7 +56,7 @@ class AuctionsControllerTest < ActionDispatch::IntegrationTest
   test "load error keeps the page shell and offers retry" do
     broken = Class.new(AuctionSearch) { def records = raise(ActiveRecord::ConnectionNotEstablished, "db down") }
     build = ->(*args, **opts) { broken.allocate.tap { |s| s.send(:initialize, *args, **opts) } }
-    with_singleton_stub(AuctionSearch, :new, build) do
+    with_stubbed(AuctionSearch, :new, build) do
       get auctions_path(status: "live")
     end
     assert_response :service_unavailable

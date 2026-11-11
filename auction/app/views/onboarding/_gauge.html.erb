@@ -1,0 +1,10 @@
+<%# Half-circle gauge for a 300-850 score. pathLength=100 lets the dash be a percentage. %>
+<% pct = (score_fraction(score) * 100).round(1) %>
+<svg class="gauge" viewBox="0 0 200 110" role="img" aria-label="คะแนนเครดิต <%= score %> จาก 850">
+  <path class="gauge__track" d="M 15 100 A 85 85 0 0 1 185 100" pathLength="100" />
+  <path class="gauge__value" d="M 15 100 A 85 85 0 0 1 185 100" pathLength="100"
+        stroke-dasharray="<%= pct %> 100" />
+  <text class="gauge__score" x="100" y="88" text-anchor="middle"><%= score %></text>
+  <text class="gauge__range" x="15" y="108" text-anchor="middle">300</text>
+  <text class="gauge__range" x="185" y="108" text-anchor="middle">850</text>
+</svg>

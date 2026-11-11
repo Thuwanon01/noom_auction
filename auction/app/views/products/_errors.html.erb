@@ -1,0 +1,5 @@
+<% if record.errors.any? %>
+  <ul class="form-errors" role="alert">
+    <% record.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+  </ul>
+<% end %>

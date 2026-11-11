@@ -1,0 +1,77 @@
+<% explainers = {
+  "english" => ["ประมูลขึ้นราคา (English)", "ผู้ประมูลเสนอราคาสูงขึ้นเรื่อยๆ ใครให้สูงสุดเมื่อหมดเวลาเป็นผู้ชนะ"],
+  "dutch"   => ["ประมูลลดราคา (Dutch)", "ราคาเริ่มสูงแล้วลดลงตามเวลา คนแรกที่กดซื้อเป็นผู้ชนะทันที"],
+  "sealed"  => ["ประมูลซองปิด (Sealed)", "ทุกคนเสนอราคาแบบลับ เปิดเผยเมื่อจบการประมูล ราคาสูงสุดชนะ"]
+} %>
+<%= form_with model: @auction, scope: :auction, url: update_step_product_path(@product, 3), method: :patch,
+              class: "form", data: { controller: "auction-setup", auction_setup_name_value: @product.name } do |f| %>
+  <%= render "products/errors", record: @auction %>
+
+  <fieldset class="field">
+    <legend class="field__label">รูปแบบการประมูล *</legend>
+    <% explainers.each do |value, (title, text)| %>
+      <label class="type-option">
+        <%= f.radio_button :auction_type, value, required: true, data: { action: "auction-setup#refresh", auction_setup_target: "type" } %>
+        <span><strong><%= title %></strong><br><span class="field__hint"><%= text %></span></span>
+      </label>
+    <% end %>
+  </fieldset>
+
+  <div class="field-row">
+    <label class="field"><span class="field__label">ราคาเริ่มต้น (฿) *</span>
+      <%= f.number_field :start_price, class: "input", min: AuctionSellerSetup::MIN_START_PRICE, step: 1, required: true,
+                         data: { action: "input->auction-setup#refresh", auction_setup_target: "price" } %>
+      <span class="field__hint">ขั้นต่ำ ฿<%= AuctionSellerSetup::MIN_START_PRICE %></span></label>
+    <label class="field"><span class="field__label">ราคาสำรอง (฿)</span>
+      <%= f.number_field :reserve_price, class: "input", min: 0, step: 1 %>
+      <span class="field__hint">ไม่บังคับ · ผู้ประมูลมองไม่เห็น · ต้องไม่ต่ำกว่าราคาเริ่มต้น</span></label>
+  </div>
+
+  <div class="field-row">
+    <label class="field"><span class="field__label">เริ่มประมูล *</span>
+      <%= f.datetime_local_field :start_at, class: "input", required: true,
+                                 min: (Time.current + AuctionSellerSetup::MIN_LEAD).strftime("%Y-%m-%dT%H:%M") %>
+      <span class="field__hint">อย่างน้อย 1 ชั่วโมงจากตอนนี้</span></label>
+    <label class="field"><span class="field__label">สิ้นสุด *</span>
+      <%= f.datetime_local_field :stop_at, class: "input", required: true %>
+      <span class="field__hint">ระยะเวลา 1 ชั่วโมง ถึง 14 วัน</span></label>
+  </div>
+
+  <div class="field-row" data-auction-setup-target="group" data-type="english" hidden>
+    <label class="field"><span class="field__label">บิดขั้นต่ำต่อครั้ง (฿)</span>
+      <%= f.number_field :bid_increment, class: "input", min: AuctionSellerSetup::MIN_BID_INCREMENT, step: 1,
+                         value: @auction.bid_increment || AuctionSellerSetup::DEFAULT_BID_INCREMENT %>
+      <span class="field__hint">ค่าเริ่มต้น ฿100 ขั้นต่ำ ฿10</span></label>
+  </div>
+
+  <div class="field-row" data-auction-setup-target="group" data-type="dutch" hidden>
+    <label class="field"><span class="field__label">ราคาต่ำสุด (฿)</span>
+      <%= f.number_field :floor_price, class: "input", min: 1, step: 1 %></label>
+    <label class="field"><span class="field__label">ลดราคาครั้งละ (฿)</span>
+      <%= f.number_field :price_drop, class: "input", min: 1, step: 1 %></label>
+    <label class="field"><span class="field__label">ทุกๆ (นาที, 1–60)</span>
+      <%= f.number_field :drop_interval_minutes, class: "input", min: 1, max: 60, step: 1 %></label>
+  </div>
+
+  <p class="field__hint" data-auction-setup-target="group" data-type="sealed" hidden>
+    ประมูลซองปิดไม่มีช่องเพิ่มเติม · ราคาที่เสนอจะถูกซ่อนจนกว่าการประมูลจะจบ
+  </p>
+
+  <div class="field">
+    <span class="field__label">ตัวอย่างการ์ดประมูล</span>
+    <article class="card preview" aria-live="polite">
+      <div class="card__image"><span class="card__emoji" aria-hidden="true">🖼️</span></div>
+      <div class="card__body">
+        <p class="card__meta"><span data-auction-setup-target="previewType">ยังไม่เลือกรูปแบบ</span></p>
+        <h2 class="card__title"><%= @product.name %></h2>
+        <p class="card__price-label">ราคาเริ่มต้น</p>
+        <p class="card__price">฿<span data-auction-setup-target="previewPrice">0</span></p>
+      </div>
+    </article>
+  </div>
+
+  <div class="form__actions">
+    <%= link_to "ย้อนกลับ", step_product_path(@product, 2), class: "btn btn--ghost" %>
+    <%= f.submit "ถัดไป", class: "btn btn--primary" %>
+  </div>
+<% end %>

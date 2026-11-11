@@ -91,7 +91,7 @@ module AuctionsHelper
     chips << [ "ค้นหา: #{search.q}", catalog_params_without(search, :q) ] if search.q
     chips << [ phase_label(search.status), catalog_params_without(search, :status) ] if search.status
     search.types.each { |t| chips << [ auction_type_label(t), catalog_params_without(search, :type, t) ] }
-    search.categories.each { |c| chips << [ Product::CATEGORIES[c], catalog_params_without(search, :category, c) ] }
+    search.categories.each { |c| chips << [ Product::CATEGORY_LABELS[c], catalog_params_without(search, :category, c) ] }
     chips << [ AuctionSearch::PRICE_RANGES[search.price][:label], catalog_params_without(search, :price) ] if search.price
     chips
   end

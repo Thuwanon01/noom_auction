@@ -8,11 +8,11 @@ class EnglishBiddingJsTest < ApplicationSystemTestCase
   setup do
     skip "Chrome not available" unless system("which google-chrome chromium > /dev/null 2>&1") || File.exist?("/Applications/Google Chrome.app")
     @auction = auctions(:english)
-    visit auction_path(@auction) # establish the session cookie on the app host
-    page.evaluate_async_script(<<~JS, test_sign_in_path, users(:buyer).id)
-      const [path, id, done] = arguments
-      fetch(path, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "user_id=" + id }).then(() => done())
-    JS
+    visit login_path
+    fill_in "email", with: users(:buyer).email
+    fill_in "password", with: "password123"
+    click_button "Login"
+    assert_no_current_path login_path
     visit auction_path(@auction)
   end
 
