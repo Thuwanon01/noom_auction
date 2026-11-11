@@ -1,0 +1,89 @@
+<% content_for :title, "รายการประมูล · Noom Auction" %>
+<% content_for :head do %>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<% end %>
+
+<div class="shop">
+  <aside class="shop__menu">
+    <%= link_to root_path, class: "shop__brand" do %>Noom <span>Auction</span><% end %>
+    <p class="shop__menu-label">เมนู</p>
+    <nav class="shop__nav">
+      <a href="#" class="shop__nav-link">My Event</a>
+      <a href="#" class="shop__nav-link">My Product</a>
+      <a href="#" class="shop__nav-link">Register Product</a>
+    </nav>
+    <p class="shop__menu-note">* ต้อง login ก่อนใช้งาน</p>
+  </aside>
+
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <h1 class="shop__title">Event</h1>
+        <p class="shop__subtitle">รายการสินค้าที่เปิดประมูล</p>
+      </div>
+      <div class="shop__actions">
+        <a href="#" class="btn btn--primary">+ Create Event</a>
+        <details class="profile">
+          <summary class="profile__avatar" aria-label="บัญชีผู้ใช้">👤</summary>
+          <div class="profile__menu">
+            <a href="#">Login</a>
+            <a href="#">Profile</a>
+            <a href="#">Logout</a>
+          </div>
+        </details>
+      </div>
+    </header>
+
+    <%= form_with url: auctions_path, method: :get, class: "toolbar", data: { turbo: false } do %>
+      <div class="toolbar__chips">
+        <%= link_to "ทั้งหมด", auctions_path(sort: @sort), class: ["chip", ("chip--on" if @status.nil?)] %>
+        <% AuctionsController::STATUSES.each do |key, label| %>
+          <%= link_to label, auctions_path(status: key, sort: @sort), class: ["chip", "chip--#{key}", ("chip--on" if @status == key)] %>
+        <% end %>
+      </div>
+      <label class="toolbar__sort">
+        เรียงตาม
+        <%= hidden_field_tag :status, @status if @status %>
+        <%= select_tag :sort, options_for_select(AuctionsController::SORTS.invert, @sort), onchange: "this.form.submit()" %>
+      </label>
+    <% end %>
+
+    <% if @auctions.empty? %>
+      <p class="empty">ยังไม่มีรายการในหมวดนี้</p>
+    <% else %>
+      <div class="grid">
+        <% @auctions.each do |a| %>
+          <article class="card">
+            <div class="card__image">
+              <span class="card__emoji"><%= a[:emoji] %></span>
+              <span class="badge badge--<%= a[:status] %>"><%= AuctionsController::STATUSES[a[:status]] %></span>
+            </div>
+            <div class="card__body">
+              <p class="card__meta"><%= a[:product] %> · <%= a[:type] %></p>
+              <h2 class="card__title"><%= a[:title] %></h2>
+              <p class="card__price-label"><%= a[:status] == "upcoming" ? "ราคาเริ่มต้น" : "ราคาล่าสุด" %></p>
+              <p class="card__price">฿<%= number_with_delimiter(a[:price]) %></p>
+              <dl class="card__dates">
+                <div><dt>Start</dt><dd><%= l a[:start_at], format: "%d/%m %H:%M" %></dd></div>
+                <div><dt>Stop</dt><dd><%= l a[:stop_at], format: "%d/%m %H:%M" %></dd></div>
+              </dl>
+              <a href="#" class="btn btn--block <%= a[:status] == 'live' ? 'btn--primary' : 'btn--ghost' %>">
+                <%= a[:status] == "live" ? "ประมูลเลย" : "ดูรายละเอียด" %>
+              </a>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @total_pages > 1 %>
+      <nav class="pager" aria-label="หน้า">
+        <% (1..@total_pages).each do |p| %>
+          <%= link_to p, auctions_path(page: p, status: @status, sort: @sort), class: ["pager__link", ("pager__link--on" if p == @page)] %>
+        <% end %>
+      </nav>
+    <% end %>
+  </main>
+</div>

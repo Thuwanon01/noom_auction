@@ -1,0 +1,59 @@
+# Draft: uses in-memory mock data until the auction API/model exists.
+class AuctionsController < ApplicationController
+  PER_PAGE = 6
+
+  STATUSES = {
+    "live"     => "กำลังประมูล",
+    "upcoming" => "เร็วๆ นี้",
+    "ended"    => "จบแล้ว"
+  }.freeze
+
+  SORTS = {
+    "ending"     => "ใกล้ปิดก่อน",
+    "price_asc"  => "ราคาต่ำ → สูง",
+    "price_desc" => "ราคาสูง → ต่ำ"
+  }.freeze
+
+  def index
+    items = mock_auctions
+
+    @status = STATUSES.key?(params[:status]) ? params[:status] : nil
+    items = items.select { |a| a[:status] == @status } if @status
+
+    @sort = SORTS.key?(params[:sort]) ? params[:sort] : "ending"
+    items =
+      case @sort
+      when "price_asc"  then items.sort_by { |a| a[:price] }
+      when "price_desc" then items.sort_by { |a| -a[:price] }
+      else items.sort_by { |a| [ STATUSES.keys.index(a[:status]), a[:stop_at] ] }
+      end
+
+    @total_pages = [ (items.size / PER_PAGE.to_f).ceil, 1 ].max
+    @page = params[:page].to_i.clamp(1, @total_pages)
+    @auctions = items.slice((@page - 1) * PER_PAGE, PER_PAGE) || []
+  end
+
+  private
+
+  def mock_auctions
+    now = Time.current.beginning_of_hour
+    [
+      { title: "กล้องฟิล์ม Nikon FM2",        type: "English",  product: "กล้อง",     emoji: "📷", price: 4_500,  start_at: now - 2.days,  stop_at: now + 5.hours },
+      { title: "นาฬิกา Seiko 5 วินเทจ",       type: "English",  product: "นาฬิกา",    emoji: "⌚", price: 3_200,  start_at: now - 1.day,   stop_at: now + 1.day },
+      { title: "กีตาร์โปร่ง Yamaha F310",     type: "Dutch",    product: "เครื่องดนตรี", emoji: "🎸", price: 2_800,  start_at: now - 3.hours, stop_at: now + 2.days },
+      { title: "จักรยานไฮบริด มือสอง",         type: "English",  product: "กีฬา",      emoji: "🚲", price: 6_900,  start_at: now + 1.day,   stop_at: now + 4.days },
+      { title: "แผ่นเสียง The Beatles ชุดแรก", type: "Sealed",   product: "ของสะสม",   emoji: "💿", price: 12_000, start_at: now + 2.days,  stop_at: now + 6.days },
+      { title: "พระเครื่องเก่า (มีใบรับรอง)",   type: "English",  product: "ของสะสม",   emoji: "🪷", price: 25_000, start_at: now - 5.days,  stop_at: now - 1.day },
+      { title: "iPad Air รุ่น 5 สภาพดี",       type: "English",  product: "ไอที",      emoji: "📱", price: 9_500,  start_at: now - 6.hours, stop_at: now + 10.hours },
+      { title: "โต๊ะไม้สักโบราณ",              type: "Dutch",    product: "เฟอร์นิเจอร์", emoji: "🪑", price: 18_000, start_at: now - 7.days,  stop_at: now - 2.days },
+      { title: "ภาพวาดสีน้ำมัน ทิวทัศน์",       type: "Sealed",   product: "ศิลปะ",     emoji: "🖼️", price: 7_700,  start_at: now + 3.hours, stop_at: now + 3.days }
+    ].each_with_index.map do |a, i|
+      status =
+        if now < a[:start_at] then "upcoming"
+        elsif now > a[:stop_at] then "ended"
+        else "live"
+        end
+      a.merge(id: i + 1, status: status)
+    end
+  end
+end
