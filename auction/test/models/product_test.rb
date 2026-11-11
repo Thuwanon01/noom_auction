@@ -32,6 +32,7 @@ class ProductTest < ActiveSupport::TestCase
 
   test "destroying a product removes its auction and files" do
     p = products(:camera)
+    p.update_columns(status: "available") # in_event products cannot be destroyed (M2.2)
     p.product_images.create!(position: 1)
     assert_difference [ "Auction.count", "ProductImage.count" ], -1 do
       p.destroy!
