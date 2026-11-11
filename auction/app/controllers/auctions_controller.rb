@@ -14,11 +14,23 @@ class AuctionsController < ApplicationController
     "price_desc" => "ราคาสูง → ต่ำ"
   }.freeze
 
+  PRICE_RANGES = {
+    "0-1000"       => { label: "≤ ฿1,000",           range: 0..1_000 },
+    "1001-3000"    => { label: "฿1,001 – 3,000",     range: 1_001..3_000 },
+    "3001-10000"   => { label: "฿3,001 – 10,000",    range: 3_001..10_000 },
+    "10001-50000"  => { label: "฿10,001 – 50,000",   range: 10_001..50_000 },
+    "50001-100000" => { label: "฿50,001 – 100,000",  range: 50_001..100_000 },
+    "100001-"      => { label: "> ฿100,000",         range: 100_001.. }
+  }.freeze
+
   def index
     items = mock_auctions
 
     @status = STATUSES.key?(params[:status]) ? params[:status] : nil
     items = items.select { |a| a[:status] == @status } if @status
+
+    @price = PRICE_RANGES.key?(params[:price]) ? params[:price] : nil
+    items = items.select { |a| PRICE_RANGES[@price][:range].cover?(a[:price]) } if @price
 
     @sort = SORTS.key?(params[:sort]) ? params[:sort] : "ending"
     items =
@@ -46,7 +58,10 @@ class AuctionsController < ApplicationController
       { title: "พระเครื่องเก่า (มีใบรับรอง)",   type: "English",  product: "ของสะสม",   emoji: "🪷", price: 25_000, start_at: now - 5.days,  stop_at: now - 1.day },
       { title: "iPad Air รุ่น 5 สภาพดี",       type: "English",  product: "ไอที",      emoji: "📱", price: 9_500,  start_at: now - 6.hours, stop_at: now + 10.hours },
       { title: "โต๊ะไม้สักโบราณ",              type: "Dutch",    product: "เฟอร์นิเจอร์", emoji: "🪑", price: 18_000, start_at: now - 7.days,  stop_at: now - 2.days },
-      { title: "ภาพวาดสีน้ำมัน ทิวทัศน์",       type: "Sealed",   product: "ศิลปะ",     emoji: "🖼️", price: 7_700,  start_at: now + 3.hours, stop_at: now + 3.days }
+      { title: "ภาพวาดสีน้ำมัน ทิวทัศน์",       type: "Sealed",   product: "ศิลปะ",     emoji: "🖼️", price: 7_700,  start_at: now + 3.hours, stop_at: now + 3.days },
+      { title: "หูฟังมือสอง สภาพดี",          type: "English",  product: "ไอที",      emoji: "🎧", price: 850,    start_at: now - 4.hours, stop_at: now + 8.hours },
+      { title: "MacBook Pro M3 14 นิ้ว",       type: "English",  product: "ไอที",      emoji: "💻", price: 62_000, start_at: now - 1.day,   stop_at: now + 2.days },
+      { title: "รถมอเตอร์ไซค์คลาสสิก",         type: "Sealed",   product: "ยานพาหนะ",  emoji: "🏍️", price: 145_000, start_at: now + 1.day,  stop_at: now + 7.days }
     ].each_with_index.map do |a, i|
       status =
         if now < a[:start_at] then "upcoming"
