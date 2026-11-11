@@ -1,0 +1,15 @@
+<% labels = { 1 => "ข้อมูลสินค้า", 2 => "รูปและเอกสาร", 3 => "ตั้งค่าประมูล", 4 => "ตรวจสอบและส่ง" } %>
+<nav class="wizard-progress" aria-label="ขั้นตอน <%= step %> จาก 4">
+  <p class="wizard-progress__count"><%= step %>/4</p>
+  <ol class="wizard-progress__steps">
+    <% labels.each do |n, label| %>
+      <li class="wizard-progress__step <%= 'wizard-progress__step--done' if n < step %> <%= 'wizard-progress__step--on' if n == step %>">
+        <% if product.persisted? && n < step && product.can_open_step?(n) %>
+          <%= link_to "#{n}. #{label}", step_product_path(product, n) %>
+        <% else %>
+          <span><%= n %>. <%= label %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+</nav>

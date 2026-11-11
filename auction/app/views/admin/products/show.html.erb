@@ -1,0 +1,54 @@
+<% content_for :title, "Review #{@product.code} · Noom Auction" %>
+<% auction = @product.auction %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :admin %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <h1 class="shop__title"><%= @product.code %> · <%= @product.name %></h1>
+        <p class="shop__subtitle">ผู้ขาย: <%= @product.seller.name %> · สถานะ: <%= @product.status_label %></p>
+      </div>
+      <div class="shop__actions"><%= link_to "กลับ", admin_products_path, class: "btn btn--ghost" %></div>
+    </header>
+    <%= render "shared/flash" %>
+    <%= render "products/errors", record: @product %>
+
+    <dl class="facts">
+      <div><dt>ประเภท</dt><dd><%= @product.category_label %></dd></div>
+      <div><dt>สภาพ</dt><dd><%= @product.condition_label %></dd></div>
+      <div><dt>รายละเอียด</dt><dd><%= simple_format(h(@product.description)) %></dd></div>
+      <div><dt>ยี่ห้อ / รุ่น / ปี</dt><dd><%= [ @product.brand, @product.model, @product.year ].compact_blank.join(" / ").presence || "-" %></dd></div>
+      <% if auction %>
+        <div><dt>รูปแบบประมูล</dt><dd><%= auction.auction_type %></dd></div>
+        <div><dt>ราคาเริ่มต้น / สำรอง</dt><dd>฿<%= number_with_delimiter(auction.start_price) %> / <%= auction.reserve_price ? "฿#{number_with_delimiter(auction.reserve_price)}" : "ไม่มี" %></dd></div>
+        <div><dt>ช่วงเวลา</dt><dd><%= l(auction.start_at, format: :long) %> – <%= l(auction.stop_at, format: :long) %></dd></div>
+      <% end %>
+    </dl>
+
+    <h2 class="section-title">รูปสินค้า</h2>
+    <ul class="photos">
+      <% @product.product_images.includes(file_attachment: :blob).each do |image| %>
+        <li class="photos__item"><%= image_tag url_for(image.file.variant(:thumb)), class: "photos__img", alt: "" %></li>
+      <% end %>
+    </ul>
+
+    <h2 class="section-title">เอกสารยืนยันความแท้</h2>
+    <ul class="docs">
+      <% @product.product_documents.each do |doc| %>
+        <li><%= link_to doc.file.filename.to_s, url_for(doc.file), target: "_blank", rel: "noopener" %></li>
+      <% end %>
+      <% if @product.product_documents.none? %><li>ไม่มี<%= " (ประเภทนี้ต้องมี)" if @product.proof_required? %></li><% end %>
+    </ul>
+
+    <% if @product.pending_review? %>
+      <div class="form form--review">
+        <%= button_to "อนุมัติ", approve_admin_product_path(@product), method: :patch, class: "btn btn--primary" %>
+        <%= form_with url: reject_admin_product_path(@product), method: :patch, class: "form" do %>
+          <label class="field"><span class="field__label">เหตุผลที่ไม่ผ่าน *</span>
+            <%= text_area_tag :rejection_reason, params[:rejection_reason], required: true %></label>
+          <%= submit_tag "ปฏิเสธ", class: "btn btn--ghost" %>
+        <% end %>
+      </div>
+    <% end %>
+  </main>
+</div>

@@ -1,0 +1,30 @@
+<%= render layout: "onboarding/shell", locals: { step: 2, title: OnboardingController::STEP_TITLES[2],
+                                                 subtitle: "ใช้ประเมินคะแนนเครดิตสำหรับวงเงินประมูล" } do %>
+  <%= form_with model: @user, scope: :user, url: onboarding_step_path(2), method: :post, class: "form" do |f| %>
+    <label class="field"><span class="field__label">อาชีพ</span>
+      <%= f.select :occupation, User::OCCUPATIONS.map { |value, label| [ label, value ] },
+                   { include_blank: "เลือกอาชีพ" }, required: true %>
+      <%= render "onboarding/field_error", record: @user, attribute: :occupation %>
+    </label>
+
+    <label class="field"><span class="field__label">รายได้ต่อปี (บาท)</span>
+      <%= f.text_field :annual_income,
+                       value: annual_income_field_value(@user),
+                       class: "input", inputmode: "decimal", autocomplete: "off", placeholder: "เช่น 360,000", required: true,
+                       data: { controller: "thousands", action: "input->thousands#format" } %>
+      <span class="field__hint">Total income before tax, from all sources</span>
+      <%= render "onboarding/field_error", record: @user, attribute: :annual_income %>
+    </label>
+
+    <label class="field"><span class="field__label">ประสบการณ์ทำงาน (ปี)</span>
+      <%= f.number_field :years_experience, class: "input", min: 0, max: User::MAX_YEARS_EXPERIENCE, step: 0.1,
+                         inputmode: "decimal", placeholder: "เช่น 1.5", required: true %>
+      <%= render "onboarding/field_error", record: @user, attribute: :years_experience %>
+    </label>
+
+    <div class="form__actions">
+      <%= link_to "ย้อนกลับ", onboarding_step_path(1), class: "btn btn--ghost" %>
+      <%= f.button "ถัดไป", class: "btn btn--primary" %>
+    </div>
+  <% end %>
+<% end %>
