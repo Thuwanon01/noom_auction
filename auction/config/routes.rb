@@ -12,7 +12,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
 
-  resources :auctions, only: %i[index show]
+  resources :auctions, only: %i[index show] do
+    resources :bids, only: :create
+  end
   resources :events, only: :new
   resources :products, only: %i[new create destroy] do
     resources :product_images, only: %i[create destroy] do

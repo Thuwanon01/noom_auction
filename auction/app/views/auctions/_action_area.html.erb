@@ -1,5 +1,8 @@
 <%# Action area by viewer and auction state (M3.9). See AuctionActionState. %>
 <div class="action-area" data-state="<%= state %>">
+  <% if flash[:bid_notice].present? %><p class="bid-flash bid-flash--success" role="status"><%= flash[:bid_notice] %></p><% end %>
+  <%# The bid form shows its own error; other states (e.g. just ended) show it here. %>
+  <% if @bid_error && state != :bid_form %><p class="bid-flash bid-flash--error" role="alert"><%= @bid_error %></p><% end %>
   <% case state %>
   <% when :login_to_bid %>
     <%= link_to "Log in to bid", login_path, class: "btn btn--primary btn--block" %>
@@ -9,12 +12,10 @@
   <% when :complete_profile %>
     <%= link_to "Complete your profile to bid", register_path, class: "btn btn--primary btn--block" %>
   <% when :bid_form %>
-    <%# Placeholder until the bid form ships in M4.4. %>
-    <form class="bid-box__form" onsubmit="return false" aria-label="เสนอราคา">
-      <input class="input" type="number" min="<%= auction.next_min_bid %>" step="1" placeholder="<%= number_with_delimiter(auction.next_min_bid) %>" aria-label="ราคาที่เสนอ" disabled>
-      <button class="btn btn--primary" type="submit" disabled>เสนอราคา</button>
-    </form>
-    <p class="bid-box__note">ระบบเสนอราคาจะเปิดใช้งานเร็วๆ นี้</p>
+    <%= render "auctions/bid_form", auction: auction %>
+  <% when :highest_bidder %>
+    <p class="action-area__note">You are the highest bidder</p>
+    <p class="bid-box__note">เสนอราคาได้อีกครั้งเมื่อมีผู้เสนอราคาสูงกว่า</p>
   <% when :remind_me %>
     <button class="btn btn--ghost btn--block" type="button" disabled>Remind me</button>
     <p class="bid-box__note">การแจ้งเตือนจะเปิดใช้งานเร็วๆ นี้</p>
