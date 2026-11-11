@@ -25,7 +25,7 @@ module Authentication
   def require_login
     return if logged_in?
 
-    session[:return_to] = request.fullpath if request.get?
+    session[:return_to] = request.fullpath if request.get? || request.head?
     redirect_to login_path, alert: "Please log in to continue"
   end
 
