@@ -24,6 +24,14 @@ Rails.application.routes.draw do
       patch "steps/:step", to: "products#update_step", as: :update_step, constraints: { step: /[1-4]/ }
     end
   end
+  namespace :admin do
+    resources :products, only: %i[index show] do
+      member do
+        patch :approve
+        patch :reject
+      end
+    end
+  end
   get "my/events",   to: "events#index",   as: :my_events
   get "my/products", to: "products#index", as: :my_products
   get    "login",    to: "sessions#new",          as: :login

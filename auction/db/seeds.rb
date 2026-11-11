@@ -63,3 +63,12 @@ now = Time.current.beginning_of_hour
   attrs.merge!(floor_price: (price * 0.5).to_i, price_drop: [ price / 20, 1 ].max, drop_interval_minutes: 10) if type == "dutch"
   Auction.create!(**attrs)
 end
+
+# M2.8 (#25): a development admin to try the review queue. Never create admins from seeds in production.
+unless Rails.env.production?
+  User.find_or_create_by!(email: "admin@example.com") do |u|
+    u.name = "Ada Admin"
+    u.onboarding_status = "completed"
+    u.admin = true
+  end
+end
