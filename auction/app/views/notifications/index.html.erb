@@ -1,0 +1,26 @@
+<% content_for :title, "Notifications · Noom Auction" %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :notifications %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <p class="crumb">Notifications</p>
+        <h1 class="shop__title">การแจ้งเตือน</h1>
+      </div>
+      <div class="shop__actions"><%= render "shared/profile" %></div>
+    </header>
+
+    <% if @notifications.empty? %>
+      <p class="empty">ยังไม่มีการแจ้งเตือน</p>
+    <% else %>
+      <ul class="notifications">
+        <% @notifications.each do |n| %>
+          <li class="notification <%= "notification--unread" if @unread_ids.include?(n.id) %>">
+            <p class="notification__message"><%= n.auction ? link_to(n.message, auction_path(n.auction)) : n.message %></p>
+            <p class="notification__time"><%= thai_datetime(n.created_at) %></p>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </main>
+</div>
