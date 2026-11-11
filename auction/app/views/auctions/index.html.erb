@@ -1,22 +1,7 @@
 <% content_for :title, "รายการประมูล · Noom Auction" %>
-<% content_for :head do %>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap" rel="stylesheet">
-<% end %>
 
 <div class="shop">
-  <aside class="shop__menu">
-    <%= link_to root_path, class: "shop__brand" do %>Noom <span>Auction</span><% end %>
-    <p class="shop__menu-label">เมนู</p>
-    <nav class="shop__nav">
-      <%= link_to "Event", auctions_path, class: "shop__nav-link shop__nav-link--on", aria: { current: "page" } %>
-      <a href="#" class="shop__nav-link">My Event</a>
-      <a href="#" class="shop__nav-link">My Product</a>
-      <a href="#" class="shop__nav-link">Register Product</a>
-    </nav>
-    <p class="shop__menu-note">🔒 My Event, My Product และ Register Product ต้อง login ก่อนใช้งาน</p>
-  </aside>
+  <%= render "shared/sidebar", active: :events %>
 
   <main class="shop__main">
     <header class="shop__top">
@@ -25,15 +10,8 @@
         <p class="shop__subtitle">รายการสินค้าที่เปิดประมูล</p>
       </div>
       <div class="shop__actions">
-        <a href="#" class="btn btn--primary">+ Create Event</a>
-        <details class="profile">
-          <summary class="profile__avatar" aria-label="บัญชีผู้ใช้">👤</summary>
-          <div class="profile__menu">
-            <a href="#">Login</a>
-            <a href="#">Profile</a>
-            <a href="#">Logout</a>
-          </div>
-        </details>
+        <%= link_to "+ Create Event", new_event_path, class: "btn btn--primary" %>
+        <%= render "shared/profile" %>
       </div>
     </header>
 
@@ -72,7 +50,7 @@
             <div class="card__image">
               <span class="card__emoji" aria-hidden="true"><%= a[:emoji] %></span>
               <span class="badge badge--<%= a[:status] %>"><%= AuctionsController::STATUSES[a[:status]] %></span>
-              <span class="countdown <%= 'countdown--urgent' if closing_soon?(a) %>">⏱ <%= time_left_label(a) %></span>
+              <span class="countdown <%= 'countdown--urgent' if closing_soon?(a) %>"><%= time_left_label(a) %></span>
             </div>
             <div class="card__body">
               <p class="card__meta">
@@ -88,9 +66,9 @@
                 <div><dt>เริ่ม</dt><dd><%= thai_datetime(a[:start_at]) %></dd></div>
                 <div><dt>ปิด</dt><dd><%= thai_datetime(a[:stop_at]) %></dd></div>
               </dl>
-              <a href="#" class="btn btn--block <%= a[:status] == 'live' ? 'btn--primary' : 'btn--ghost' %>">
+              <%= link_to auction_path(a[:id]), class: "btn btn--block #{a[:status] == 'live' ? 'btn--primary' : 'btn--ghost'}" do %>
                 <%= a[:status] == "live" ? "ประมูลเลย" : "ดูรายละเอียด" %>
-              </a>
+              <% end %>
             </div>
           </article>
         <% end %>

@@ -1,0 +1,60 @@
+<% a = @auction %>
+<% content_for :title, "#{a[:title]} · Noom Auction" %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :events %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <p class="crumb"><%= link_to "Event", auctions_path %> / <%= a[:product] %></p>
+        <h1 class="shop__title"><%= a[:title] %></h1>
+      </div>
+      <div class="shop__actions"><%= render "shared/profile" %></div>
+    </header>
+
+    <div class="detail">
+      <div class="detail__image" role="img" aria-label="<%= a[:title] %>"><span><%= a[:emoji] %></span></div>
+      <div>
+        <span class="badge badge--static badge--<%= a[:status] %>"><%= AuctionsController::STATUSES[a[:status]] %></span>
+        <h2 class="detail__title"><%= a[:title] %></h2>
+        <dl class="facts">
+          <div><dt>ประเภทประมูล</dt><dd><%= auction_type_label(a[:type]) %></dd></div>
+          <div><dt>สินค้า</dt><dd><%= a[:product] %></dd></div>
+          <div><dt>เริ่ม</dt><dd><%= thai_datetime(a[:start_at]) %></dd></div>
+          <div><dt>ปิด</dt><dd><%= thai_datetime(a[:stop_at]) %> · <%= time_left_label(a) %></dd></div>
+        </dl>
+
+        <div class="bid-box">
+          <p class="bid-box__label"><%= { "upcoming" => "ราคาเริ่มต้น", "ended" => "ราคาปิด" }.fetch(a[:status], "ราคาล่าสุด") %></p>
+          <p class="bid-box__price">฿<%= number_with_delimiter(a[:price]) %></p>
+          <% if a[:status] == "live" %>
+            <form class="bid-box__form" onsubmit="return false">
+              <input class="input" type="number" min="<%= @min_bid %>" placeholder="<%= number_with_delimiter(@min_bid) %>" aria-label="ราคาที่เสนอ">
+              <button class="btn btn--primary" type="submit">OK</button>
+            </form>
+            <p class="bid-box__note">เสนอราคาขั้นต่ำ ฿<%= number_with_delimiter(@min_bid) %> · ต้อง <%= link_to "login", login_path %> ก่อนประมูล</p>
+          <% else %>
+            <p class="bid-box__note"><%= a[:status] == "upcoming" ? "ยังไม่เปิดให้ประมูล" : "การประมูลนี้ปิดแล้ว" %></p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">ประวัติการประมูล</h2>
+    <% if @bids.empty? %>
+      <p class="empty">ยังไม่มีการเสนอราคา</p>
+    <% else %>
+      <table class="table">
+        <thead><tr><th>#</th><th>User</th><th class="num">ราคา</th><th class="num">เวลา</th></tr></thead>
+        <tbody>
+          <% @bids.each_with_index do |b, i| %>
+            <tr class="<%= 'is-top' if i.zero? %>">
+              <td><%= @bids.size - i %></td><td><%= b[:user] %></td>
+              <td class="num">฿<%= number_with_delimiter(b[:price]) %></td>
+              <td class="num"><%= thai_datetime(b[:at]) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </main>
+</div>

@@ -1,0 +1,38 @@
+<% content_for :title, "สร้าง Event · Noom Auction" %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :my_events %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <p class="crumb"><%= link_to "My Event", my_events_path %> / สร้างใหม่</p>
+        <h1 class="shop__title">Create Event</h1>
+        <p class="shop__subtitle">ตั้งค่าการประมูลสำหรับสินค้าของคุณ</p>
+      </div>
+      <div class="shop__actions"><%= render "shared/profile" %></div>
+    </header>
+    <form class="form" onsubmit="return false">
+      <label class="field"><span class="field__label">Title</span><input class="input" type="text"></label>
+      <label class="field"><span class="field__label">Type Auction</span>
+        <select>
+          <% AuctionsController::TYPES.each do |k, v| %><option value="<%= k %>"><%= v %></option><% end %>
+        </select>
+      </label>
+      <label class="field"><span class="field__label">Product</span>
+        <select><% @products.each do |p| %><option><%= p %></option><% end %></select>
+      </label>
+      <div class="field-row">
+        <label class="field"><span class="field__label">Start date</span><input class="input" type="date"></label>
+        <label class="field"><span class="field__label">Start time</span><input class="input" type="time"></label>
+      </div>
+      <div class="field-row">
+        <label class="field"><span class="field__label">Stop date</span><input class="input" type="date"></label>
+        <label class="field"><span class="field__label">Stop time</span><input class="input" type="time"></label>
+      </div>
+      <label class="field"><span class="field__label">Mid Price (ราคาเริ่มต้น)</span><input class="input" type="number" min="0" placeholder="0"></label>
+      <div class="form__actions">
+        <%= link_to "Cancel", auctions_path, class: "btn btn--ghost" %>
+        <button class="btn btn--primary" type="submit">Save</button>
+      </div>
+    </form>
+  </main>
+</div>

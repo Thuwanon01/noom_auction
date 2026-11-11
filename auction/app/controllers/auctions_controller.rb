@@ -53,7 +53,25 @@ class AuctionsController < ApplicationController
     @auctions = items.slice((@page - 1) * PER_PAGE, PER_PAGE) || []
   end
 
+  def show
+    @auction = mock_auctions.find { |a| a[:id] == params[:id].to_i }
+    return head :not_found unless @auction
+
+    @bids = mock_bids(@auction)
+    @min_bid = @auction[:price] + 100
+  end
+
   private
+
+  # Newest first; mirrors the "user / price / time" table in the sketch.
+  def mock_bids(auction)
+    return [] if auction[:status] == "upcoming"
+
+    now = Time.current.beginning_of_hour
+    [ [ "cc", 0, 30 ], [ "bb", 100, 90 ], [ "aa", 200, 150 ] ].map do |user, off, mins|
+      { user: user, price: auction[:price] - off, at: now + 17.hours - mins.minutes }
+    end
+  end
 
   def mock_auctions
     now = Time.current.beginning_of_hour

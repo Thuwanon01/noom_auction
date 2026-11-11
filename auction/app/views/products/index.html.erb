@@ -1,0 +1,24 @@
+<% content_for :title, "My Product · Noom Auction" %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :my_products %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <h1 class="shop__title">My Product</h1>
+        <p class="shop__subtitle">สินค้าที่คุณลงทะเบียนไว้</p>
+      </div>
+      <div class="shop__actions">
+        <%= link_to "+ Register Product", new_product_path, class: "btn btn--primary" %>
+        <%= render "shared/profile" %>
+      </div>
+    </header>
+    <table class="table">
+      <thead><tr><th>รหัส</th><th>ชื่อสินค้า</th><th>ประเภท</th><th>สถานะ</th></tr></thead>
+      <tbody>
+        <% @products.each do |p| %>
+          <tr><td><%= p[:code] %></td><td><%= p[:name] %></td><td><%= p[:category] %></td><td><span class="tag"><%= @status_labels[p[:status]] %></span></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </main>
+</div>

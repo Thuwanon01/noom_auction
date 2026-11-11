@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>Create event</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.pg{font-family:'Kanit',system-ui,sans-serif;font-weight:300;color:#111;background:#fff;display:flex;flex-wrap:wrap;min-height:100%}
+.side{width:220px;box-sizing:border-box;padding:24px 16px;border-right:1px solid #e8e8e8;flex:0 0 220px}
+.nav{display:block;padding:8px 12px;border-radius:6px;color:#444;font-size:14px;text-decoration:none}
+.nav.on{background:#fafafa;color:#111;font-weight:500;box-shadow:inset 2px 0 0 #111}
+.main{flex:999 1 560px;min-width:0;padding:24px 32px 48px}
+.btn{padding:9px 18px;border-radius:6px;border:1px solid #111;background:#111;color:#fff;font:400 14px 'Kanit',sans-serif;text-decoration:none}
+.btn.g{background:#fff;color:#111;border-color:#cfcfcf}
+.f{display:flex;flex-direction:column;gap:6px;flex:1}
+.f span{font-size:14px;font-weight:400}
+.in{padding:9px 12px;border-radius:6px;border:1px solid #cfcfcf;font:300 14px 'Kanit',sans-serif;box-sizing:border-box;width:100%;background:#fff}
+</style>
+</helmet>
+<div class="pg">
+  <aside class="side">
+    <div style="font-size:20px;font-weight:500;margin-bottom:32px">Noom <span style="font-weight:300;color:#6b6b6b">Auction</span></div>
+    <div style="font-size:12px;color:#6b6b6b;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">เมนู</div>
+    <a class="nav" href="EventList.dc.html">Event</a>
+    <a class="nav on" href="EventList.dc.html">My Event</a>
+    <a class="nav" href="EventList.dc.html">My Product</a>
+    <a class="nav" href="RegisterProduct.dc.html">Register Product</a>
+  </aside>
+  <main class="main">
+    <div style="padding-bottom:24px;border-bottom:1px solid #e8e8e8;margin-bottom:32px">
+      <div style="font-size:14px;color:#6b6b6b;margin-bottom:8px">My Event / สร้างใหม่</div>
+      <h1 style="margin:0;font-weight:500;font-size:28px">Create Event</h1>
+      <p style="margin:2px 0 0;color:#6b6b6b">ตั้งค่าการประมูลสำหรับสินค้าของคุณ</p>
+    </div>
+    <form style="max-width:560px;display:flex;flex-direction:column;gap:16px">
+      <label class="f"><span>Title</span><input class="in"></label>
+      <label class="f"><span>Type Auction</span><select class="in"><option>ประมูลขึ้นราคา</option><option>ประมูลลดราคา</option><option>ประมูลซองปิด</option></select></label>
+      <label class="f"><span>Product</span><select class="in"><option>กล้องฟิล์ม Nikon FM2</option></select></label>
+      <div style="display:flex;gap:12px"><label class="f"><span>Start date</span><input class="in" type="date"></label><label class="f"><span>Start time</span><input class="in" type="time"></label></div>
+      <div style="display:flex;gap:12px"><label class="f"><span>Stop date</span><input class="in" type="date"></label><label class="f"><span>Stop time</span><input class="in" type="time"></label></div>
+      <label class="f"><span>Mid Price (ราคาเริ่มต้น)</span><input class="in" type="number" placeholder="0"></label>
+      <div style="display:flex;gap:12px;justify-content:flex-end;padding-top:12px;border-top:1px solid #e8e8e8">
+        <a class="btn g" href="EventList.dc.html">Cancel</a><button class="btn" type="button">Save</button>
+      </div>
+    </form>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<% content_for :title, "My Event · Noom Auction" %>
+<div class="shop">
+  <%= render "shared/sidebar", active: :my_events %>
+  <main class="shop__main">
+    <header class="shop__top">
+      <div>
+        <h1 class="shop__title">My Event</h1>
+        <p class="shop__subtitle">อีเวนต์ประมูลที่คุณสร้าง</p>
+      </div>
+      <div class="shop__actions">
+        <%= link_to "+ Create Event", new_event_path, class: "btn btn--primary" %>
+        <%= render "shared/profile" %>
+      </div>
+    </header>
+    <table class="table">
+      <thead><tr><th>Title</th><th>Type</th><th>เริ่ม</th><th>ปิด</th><th class="num">ราคา</th><th>สถานะ</th></tr></thead>
+      <tbody>
+        <% @events.each do |e| %>
+          <tr>
+            <td><%= link_to e[:title], auction_path(e[:id]) %></td>
+            <td><%= auction_type_label(e[:type]) %></td>
+            <td><%= thai_datetime(e[:start_at]) %></td>
+            <td><%= thai_datetime(e[:stop_at]) %></td>
+            <td class="num">฿<%= number_with_delimiter(e[:price]) %></td>
+            <td><span class="badge badge--static badge--<%= e[:status] %>"><%= AuctionsController::STATUSES[e[:status]] %></span></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </main>
+</div>

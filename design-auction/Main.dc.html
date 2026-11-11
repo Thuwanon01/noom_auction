@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>Design System</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.ds{font-family:'Kanit',system-ui,sans-serif;font-weight:300;color:#111;background:#fff;line-height:1.5}
+.ds h2{font-weight:500;font-size:20px;margin:0 0 16px}
+.sec{padding:40px 64px;border-top:1px solid #e8e8e8}
+.sw{width:150px;border:1px solid #e8e8e8;border-radius:6px;overflow:hidden;font-size:12px}
+.sw i{display:block;height:56px;border-bottom:1px solid #e8e8e8}
+.sw b{display:block;padding:8px 12px 0;font-weight:500}
+.sw span{display:block;padding:0 12px 8px;color:#6b6b6b}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{padding:9px 18px;border-radius:6px;border:1px solid #111;background:#fff;color:#111;font:400 14px 'Kanit',sans-serif}
+.btn.p{background:#111;color:#fff}.btn.g{border-color:#cfcfcf}
+.bdg{padding:2px 10px;border-radius:999px;border:1px solid #cfcfcf;font-size:12px}
+.tag{padding:1px 8px;border-radius:4px;border:1px solid #cfcfcf;font-size:12px}
+.chip{padding:5px 12px;border-radius:999px;border:1px solid #cfcfcf;font-size:14px;color:#444}
+.in{padding:9px 12px;border-radius:6px;border:1px solid #cfcfcf;font:300 14px 'Kanit',sans-serif;width:260px;box-sizing:border-box}
+.lbl{font-size:14px;font-weight:400;display:block;margin-bottom:6px}
+table{border-collapse:collapse;width:420px;font-size:14px}
+th{text-align:left;padding:8px 12px;border-bottom:1px solid #111;color:#6b6b6b;font-weight:400;font-size:12px}
+td{padding:12px;border-bottom:1px solid #e8e8e8}
+</style>
+</helmet>
+<div class="ds">
+  <div style="padding:56px 64px 40px">
+    <div style="font-size:14px;color:#6b6b6b">Noom <span style="font-weight:200">Auction</span></div>
+    <h1 style="margin:8px 0 8px;font-weight:500;font-size:44px;letter-spacing:-0.02em">Design System</h1>
+    <p style="margin:0;color:#444;font-size:18px">Minimal theme — ขาว ดำ เส้นบาง ไม่มีเงา ไม่มี gradient</p>
+  </div>
+
+  <div class="sec">
+    <h2>Color</h2>
+    <div class="row">
+      <div class="sw"><i style="background:#fff"></i><b>bg</b><span>#FFFFFF</span></div>
+      <div class="sw"><i style="background:#fafafa"></i><b>surface</b><span>#FAFAFA</span></div>
+      <div class="sw"><i style="background:#111"></i><b>ink / accent</b><span>#111111</span></div>
+      <div class="sw"><i style="background:#444"></i><b>ink-2</b><span>#444444</span></div>
+      <div class="sw"><i style="background:#6b6b6b"></i><b>muted</b><span>#6B6B6B</span></div>
+      <div class="sw"><i style="background:#e8e8e8"></i><b>line</b><span>#E8E8E8</span></div>
+      <div class="sw"><i style="background:#cfcfcf"></i><b>line-strong</b><span>#CFCFCF</span></div>
+      <div class="sw"><i style="background:#1f7a4d"></i><b>ok (live)</b><span>#1F7A4D</span></div>
+      <div class="sw"><i style="background:#b45309"></i><b>warn (upcoming)</b><span>#B45309</span></div>
+      <div class="sw"><i style="background:#b42318"></i><b>danger (urgent)</b><span>#B42318</span></div>
+    </div>
+    <p style="color:#6b6b6b;font-size:14px;margin:16px 0 0">สีเน้นมีสีเดียวคือดำ สีเขียว/ส้ม/แดงใช้เฉพาะสถานะ</p>
+  </div>
+
+  <div class="sec">
+    <h2>Typography — Kanit</h2>
+    <div style="font-size:36px;font-weight:500;letter-spacing:-0.02em">2xl 36 · ฿99,000</div>
+    <div style="font-size:28px;font-weight:500">xl 28 · หัวข้อหน้า</div>
+    <div style="font-size:20px">lg 20 · หัวข้อส่วน</div>
+    <div style="font-size:16px">md 16 · เนื้อหาปกติ (300)</div>
+    <div style="font-size:14px">sm 14 · ฟอร์ม ตาราง ปุ่ม</div>
+    <div style="font-size:12px;color:#6b6b6b">xs 12 · label เล็ก</div>
+  </div>
+
+  <div class="sec">
+    <h2>Spacing &amp; shape</h2>
+    <div class="row" style="align-items:flex-end;gap:20px">
+      <div style="font-size:12px;color:#6b6b6b;text-align:center"><div style="width:4px;height:4px;background:#111;margin:0 auto 4px"></div>4</div>
+      <div style="font-size:12px;color:#6b6b6b;text-align:center"><div style="width:8px;height:8px;background:#111;margin:0 auto 4px"></div>8</div>
+      <div style="font-size:12px;color:#6b6b6b;text-align:center"><div style="width:12px;height:12px;background:#111;margin:0 auto 4px"></div>12</div>
+      <div style="font-size:12px;color:#6b6b6b;text-align:center"><div style="width:16px;height:16px;background:#111;margin:0 auto 4px"></div>16</div>
+      <div style="font-size:12px;color:#6b6b6b;text-align:center"><div style="width:24px;height:24px;background:#111;margin:0 auto 4px"></div>24</div>
+      <div style="font-size:12px;color:#6b6b6b;text-align:center"><div style="width:32px;height:32px;background:#111;margin:0 auto 4px"></div>32</div>
+      <div style="font-size:12px;color:#6b6b6b;text-align:center"><div style="width:48px;height:48px;background:#111;margin:0 auto 4px"></div>48</div>
+    </div>
+    <p style="color:#6b6b6b;font-size:14px;margin:16px 0 0">radius 6px · pill 999px · border 1px hairline</p>
+  </div>
+
+  <div class="sec">
+    <h2>Components</h2>
+    <div class="row" style="margin-bottom:24px">
+      <button class="btn p">Primary</button><button class="btn">Default</button><button class="btn g">Ghost</button>
+      <span class="bdg" style="color:#1f7a4d;border-color:#1f7a4d">กำลังประมูล</span>
+      <span class="bdg" style="color:#b45309;border-color:#b45309">เร็วๆ นี้</span>
+      <span class="bdg" style="color:#6b6b6b">จบแล้ว</span>
+      <span class="tag">ประมูลขึ้นราคา</span>
+      <span class="chip" style="background:#111;color:#fff;border-color:#111">ทั้งหมด 12</span>
+      <span class="chip">กำลังประมูล 5</span>
+    </div>
+    <div class="row" style="align-items:flex-start;gap:40px">
+      <div><label class="lbl">Label</label><input class="in" placeholder="Placeholder"></div>
+      <div><label class="lbl">Select</label><select class="in"><option>ตัวเลือก 1</option></select></div>
+      <table>
+        <thead><tr><th>#</th><th>User</th><th style="text-align:right">ราคา</th></tr></thead>
+        <tbody>
+          <tr style="font-weight:500"><td>3</td><td>cc</td><td style="text-align:right">฿500</td></tr>
+          <tr><td>2</td><td>bb</td><td style="text-align:right">฿200</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
