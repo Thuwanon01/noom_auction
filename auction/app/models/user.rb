@@ -38,6 +38,24 @@ class User < ApplicationRecord
   validate :phone_must_be_verified, on: :step1
   validate :pdpa_must_be_accepted, on: :step1
 
+  # Step 2: financial profile
+  MAX_ANNUAL_INCOME = 100_000_000
+  MAX_YEARS_EXPERIENCE = 50
+  MIN_WORKING_AGE = 15 # Thai Labour Protection Act minimum employment age
+
+  validates :occupation, presence: { message: "Select your occupation" }, on: :step2
+  validates :annual_income, presence: { message: "Enter your annual income" }, on: :step2
+  validates :annual_income, allow_nil: true, numericality: {
+    greater_than: 0, less_than_or_equal_to: MAX_ANNUAL_INCOME,
+    message: "Annual income must be more than 0 and at most 100,000,000 THB"
+  }
+  validates :years_experience, presence: { message: "Enter your years of experience" }, on: :step2
+  validates :years_experience, allow_nil: true, numericality: {
+    greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_YEARS_EXPERIENCE,
+    message: "Years of experience must be between 0 and 50"
+  }
+  validate :experience_fits_age
+
   # Changing the phone number means it has to be verified again.
   before_save :reset_phone_verification, if: -> { will_save_change_to_phone? && !will_save_change_to_phone_verified_at? }
 
@@ -68,6 +86,17 @@ class User < ApplicationRecord
     pdpa_consented_at.present?
   end
 
+  # The form shows a thousands separator, e.g. "1,250,000".
+  def annual_income=(value)
+    super(value.is_a?(String) ? value.delete(",").strip : value)
+  end
+
+  def age(on: Date.current)
+    return nil unless birth_date
+
+    (on.strftime("%Y%m%d").to_i - birth_date.strftime("%Y%m%d").to_i) / 10_000
+  end
+
   def occupation_label
     OCCUPATIONS[occupation]
   end
@@ -82,6 +111,14 @@ class User < ApplicationRecord
 
   def pdpa_must_be_accepted
     errors.add(:pdpa_consent, :accepted, message: "Please accept the PDPA consent to continue") unless pdpa_consent
+  end
+
+  # Only checked when a birth date is known; skipped silently otherwise.
+  def experience_fits_age
+    return if age.nil? || years_experience.nil? || errors.include?(:years_experience)
+    return if years_experience <= [ age - MIN_WORKING_AGE, 0 ].max
+
+    errors.add(:years_experience, :too_long, message: "Years of experience does not match your age")
   end
 
   def reset_phone_verification
