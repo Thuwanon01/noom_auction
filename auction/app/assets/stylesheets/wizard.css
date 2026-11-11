@@ -25,3 +25,7 @@
 .type-option { display: flex; gap: var(--s-3); align-items: flex-start; padding: var(--s-3); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: var(--s-2); cursor: pointer; }
 .type-option:has(input:checked) { border-color: var(--ink); }
 .preview { max-width: 280px; }
+
+/* Step 4: review */
+.review { display: flex; flex-direction: column; gap: var(--s-3); }
+.review__edit { margin-left: var(--s-3); font-size: var(--fs-sm); font-weight: 300; }
