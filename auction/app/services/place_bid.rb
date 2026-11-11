@@ -16,17 +16,18 @@ class PlaceBid
     wrong_auction_type: "This auction does not accept bids"
   }.freeze
 
-  Result = Data.define(:bid, :error, :message, :minimum, :previous_leader, :replayed) do
-    def self.ok(bid, previous_leader: nil, replayed: false)
-      new(bid:, error: nil, message: nil, minimum: nil, previous_leader:, replayed:)
+  Result = Data.define(:bid, :error, :message, :minimum, :previous_leader, :replayed, :extended) do
+    def self.ok(bid, previous_leader: nil, replayed: false, extended: false)
+      new(bid:, error: nil, message: nil, minimum: nil, previous_leader:, replayed:, extended:)
     end
 
     def self.fail(error, message, minimum: nil)
-      new(bid: nil, error:, message:, minimum:, previous_leader: nil, replayed: false)
+      new(bid: nil, error:, message:, minimum:, previous_leader: nil, replayed: false, extended: false)
     end
 
     def success? = error.nil?
     def replayed? = replayed
+    def extended? = extended
   end
 
   def self.call(...) = new(...).call
@@ -88,7 +89,8 @@ class PlaceBid
 
     bid = @auction.bids.create!(user: @user, amount: @amount, placed_at: now, idempotency_key: @idempotency_key)
     @auction.update!(current_price: @amount)
-    Result.ok(bid, previous_leader: leader)
+    extended = @auction.extend_for_late_bid!(now)
+    Result.ok(bid, previous_leader: leader, extended: extended)
   end
 
   def ended?(now) = now >= @auction.stop_at || !@auction.open?
