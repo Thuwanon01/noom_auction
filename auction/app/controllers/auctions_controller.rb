@@ -14,6 +14,10 @@ class AuctionsController < ApplicationController
     "price_desc" => "ราคาสูง → ต่ำ"
   }.freeze
 
+  TYPES = {
+    "English" => "ประมูลขึ้นราคา",
+    "Dutch"   => "ประมูลลดราคา",
+    "Sealed"  => "ประมูลซองปิด"
   PRICE_RANGES = {
     "0-1000"       => { label: "≤ ฿1,000",           range: 0..1_000 },
     "1001-3000"    => { label: "฿1,001 – 3,000",     range: 1_001..3_000 },
@@ -25,6 +29,8 @@ class AuctionsController < ApplicationController
 
   def index
     items = mock_auctions
+    @counts = items.group_by { |a| a[:status] }.transform_values(&:size)
+    @counts["all"] = items.size
 
     @status = STATUSES.key?(params[:status]) ? params[:status] : nil
     items = items.select { |a| a[:status] == @status } if @status
