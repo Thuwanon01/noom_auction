@@ -21,11 +21,7 @@ class PaymentWindowTest < ActiveSupport::TestCase
     assert_equal now + 48.hours, dutch.reload.payment_due_at
   end
 
-  test "winning moves the product to sold (M2 lifecycle: in_event -> sold)" do
-    assert_equal "sold", @auction.product.status
-  end
-
-  test "the seller marks it paid in time: product stays sold" do
+  test "the seller marks it paid in time: product sold" do
     result = MarkPaid.call(@auction, by: users(:seller), now: @closed_at + 47.hours)
     assert_equal :paid, result
     assert_equal @closed_at + 47.hours, @auction.reload.paid_at

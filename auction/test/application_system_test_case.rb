@@ -1,13 +1,14 @@
 require "test_helper"
 
-# rack_test needs no browser, so system tests run anywhere (CI, WSL).
-# JavaScript behaviour (debounce, Turbo Frame swaps) is not exercised here;
-# every control also works as a plain GET form or link.
+# System tests use rack_test (no browser needed). The onboarding pages work
+# without JavaScript, so this covers the full flow. Tests that need the Stimulus
+# controllers use BrowserSystemTestCase instead.
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :rack_test
 
-  def sign_in_as(user)
-    page.driver.post(test_sign_in_path, user_id: user.id)
+  # Real login (every fixture user has the password "password123").
+  def sign_in_as(user, password: "password123")
+    page.driver.post(login_path, email: user.email, password: password)
   end
 
   # turbo-rails makes #visit wait until every <turbo-cable-stream-source>
