@@ -43,6 +43,8 @@ class ProductsController < ApplicationController
       @auction = @product.auction || @product.build_auction
       @auction.assign_attributes(auction_params)
       saved = @auction.save(context: :seller_setup)
+    when 4
+      return finish_step4
     else
       return render_unknown_step
     end
@@ -55,6 +57,22 @@ class ProductsController < ApplicationController
   end
 
   private
+
+  # Step 4: "save as draft" keeps the product as is; "submit" re-validates every step on the server
+  # (a draft can be incomplete or stale) and then sends it for admin review.
+  def finish_step4
+    if params[:intent] == "draft"
+      return redirect_to my_products_path, notice: "บันทึกแบบร่างแล้ว"
+    end
+
+    @product.accept_terms = params.dig(:product, :accept_terms)
+    if @product.valid?(:submit)
+      @product.submit!
+      redirect_to my_products_path, notice: "ส่งแล้ว เราจะตรวจสอบภายใน 24 ชั่วโมง"
+    else
+      render :step, status: :unprocessable_entity
+    end
+  end
 
   def set_product
     @product = current_user.products.find(params[:id])

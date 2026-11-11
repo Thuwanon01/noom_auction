@@ -16,6 +16,9 @@ module ProductWizard
     validates :brand, :model, length: { maximum: 100 }, allow_blank: true, on: %i[step1 submit]
     validates :year, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 2100 },
                      allow_nil: true, on: %i[step1 submit]
+    validates :accept_terms, inclusion: { in: [ "1", true ], message: "must be accepted: confirm you own the item and accept the seller terms" },
+                             on: :submit
+
     # Minimal completeness rules so later steps cannot be opened early; M2.4/M2.5 add the detailed ones.
     validate :needs_photo, :needs_proof, on: %i[step2 submit]
     validate :needs_auction, on: %i[step3 submit]
@@ -24,9 +27,11 @@ module ProductWizard
   # Is this step's data complete? Used to stop the wizard URL jumping ahead of the saved data.
   def step_complete?(step)
     context = STEPS[step.to_i]
-    return false unless context
+    return false unless context && persisted?
 
-    valid?(context)
+    # Validate a fresh copy: valid? clears and refills errors, which would wipe the messages of the form
+    # currently being rendered (the progress bar asks about earlier steps while rendering).
+    self.class.find(id).valid?(context)
   end
 
   # The first step whose data is missing, or 4 when steps 1-3 are done.
