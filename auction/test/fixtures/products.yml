@@ -2,17 +2,17 @@ camera:
   code: P-0001
   seller: seller
   name: Vintage Film Camera
-  category: electronics
+  category: camera
   condition: good
-  status: live
+  status: in_event
 
 watch:
   code: P-0002
   seller: seller
   name: Mechanical Watch
-  category: fashion
+  category: watch
   condition: like_new
-  status: live
+  status: in_event
 
 painting:
   code: P-0003
@@ -20,4 +20,12 @@ painting:
   name: Oil Painting
   category: art
   condition: good
-  status: live
+  status: in_event
+
+draft_item:
+  code: P-0099
+  seller: seller
+  name: Unreviewed Draft Lamp
+  category: other
+  condition: good
+  status: draft

@@ -31,9 +31,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_100000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "paid_at"
+    t.index ["auction_type"], name: "index_auctions_on_auction_type"
+    t.index ["current_price"], name: "index_auctions_on_current_price"
     t.index ["product_id"], name: "index_auctions_on_product_id", unique: true
+    t.index ["start_at"], name: "index_auctions_on_start_at"
     t.index ["status", "payment_due_at"], name: "index_auctions_on_status_and_payment_due_at"
     t.index ["status", "stop_at"], name: "index_auctions_on_status_and_stop_at"
+    t.index ["stop_at"], name: "index_auctions_on_stop_at"
     t.index ["winner_id"], name: "index_auctions_on_winner_id"
   end
 
@@ -71,8 +75,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_100000) do
     t.string "status", default: "draft", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "brand"
+    t.string "model"
+    t.string "year"
+    t.index ["category"], name: "index_products_on_category"
     t.index ["code"], name: "index_products_on_code", unique: true
     t.index ["seller_id"], name: "index_products_on_seller_id"
+    t.index ["status"], name: "index_products_on_status"
   end
 
   create_table "users", force: :cascade do |t|

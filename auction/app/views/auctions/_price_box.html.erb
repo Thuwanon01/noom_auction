@@ -1,0 +1,26 @@
+<%# Price box (M3.7): current price, minimum next bid, bid count, countdown. %>
+<div class="bid-box">
+  <p class="bid-box__label"><%= price_label(auction, now: @now) %></p>
+  <p class="bid-box__price" data-testid="current-price"><%= baht(auction.listed_price) %></p>
+  <dl class="bid-box__stats">
+    <% if phase == "live" && !auction.sealed? %>
+      <div><dt>เสนอราคาขั้นต่ำ</dt><dd data-testid="next-min-bid"><%= baht(auction.next_min_bid) %></dd></div>
+    <% end %>
+    <div><dt>จำนวนการเสนอราคา</dt><dd data-testid="bid-count"><%= number_with_delimiter(auction.bid_count) %></dd></div>
+    <% if phase == "live" %>
+      <div>
+        <dt>ปิดในอีก</dt>
+        <dd data-controller="countdown" data-countdown-to-value="<%= auction.stop_at.iso8601 %>">
+          <%= thai_duration(auction.stop_at - @now) %>
+        </dd>
+      </div>
+    <% elsif phase == "upcoming" %>
+      <div>
+        <dt>เริ่มในอีก</dt>
+        <dd data-controller="countdown" data-countdown-to-value="<%= auction.start_at.iso8601 %>">
+          <%= thai_duration(auction.start_at - @now) %>
+        </dd>
+      </div>
+    <% end %>
+  </dl>
+</div>

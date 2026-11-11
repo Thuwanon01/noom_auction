@@ -1,0 +1,38 @@
+<%# Auction card (M3.2). Locals: auction, now (optional). Also usable as a preview with an unsaved auction. %>
+<% now = local_assigns.fetch(:now, Time.current) %>
+<% phase = auction.phase(now) %>
+<% product = auction.product %>
+<% cover = gallery_urls(product).first %>
+<article class="card card--<%= phase %>" data-phase="<%= phase %>">
+  <div class="card__image">
+    <% if cover %>
+      <%= image_tag cover, alt: "", class: "card__photo" %>
+    <% else %>
+      <span class="card__emoji" aria-hidden="true"><%= product.emoji %></span>
+    <% end %>
+    <span class="badge badge--<%= phase %>"><%= phase_label(phase) %></span>
+    <span class="countdown <%= 'countdown--urgent' if closing_soon?(auction, now: now) %>"><%= card_time_label(auction, now: now) %></span>
+  </div>
+  <div class="card__body">
+    <p class="card__meta">
+      <span><%= product.category_label %></span>
+      <span class="tag"><%= auction_type_label(auction.auction_type) %></span>
+    </p>
+    <h2 class="card__title">
+      <% if auction.persisted? %>
+        <%= link_to product.name, auction_path(auction), class: "card__link", data: { turbo_frame: "_top" } %>
+      <% else %>
+        <%= product.name %>
+      <% end %>
+    </h2>
+    <p class="card__price-label"><%= price_label(auction, now: now) %></p>
+    <p class="card__price"><%= baht(auction.listed_price) %></p>
+    <dl class="card__dates">
+      <div><dt>เริ่ม</dt><dd><%= thai_datetime(auction.start_at) %></dd></div>
+      <div><dt>ปิด</dt><dd><%= thai_datetime(auction.stop_at) %></dd></div>
+    </dl>
+    <span class="btn btn--block <%= phase == 'live' ? 'btn--primary' : 'btn--ghost' %>" aria-hidden="true">
+      <%= phase == "live" ? "ประมูลเลย" : "ดูรายละเอียด" %>
+    </span>
+  </div>
+</article>

@@ -1,0 +1,20 @@
+<%# Bid history (M3.8). Sealed auctions hide the table until they end; only the count shows. %>
+<h2 class="section-title">ประวัติการประมูล</h2>
+<% if !bid_history_visible?(auction, current_user, now: now) %>
+  <p class="empty">ประมูลซองปิด: ราคาที่เสนอจะแสดงเมื่อปิดประมูล · มีผู้เสนอราคาแล้ว <%= number_with_delimiter(auction.bid_count) %> ครั้ง</p>
+<% elsif bids.empty? %>
+  <p class="empty">ยังไม่มีการเสนอราคา</p>
+<% else %>
+  <table class="table">
+    <thead><tr><th>#</th><th>User</th><th class="num">ราคา</th><th class="num">เวลา</th></tr></thead>
+    <tbody>
+      <% bids.each_with_index do |b, i| %>
+        <tr class="<%= 'is-top' if i.zero? %>">
+          <td><%= bids.size - i %></td><td><%= mask_name(b.user.name) %></td>
+          <td class="num"><%= baht(b.amount) %></td>
+          <td class="num"><%= thai_datetime(b.placed_at) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

@@ -20,4 +20,7 @@ Rails.application.routes.draw do
   get "login",    to: "sessions#new",       as: :login
   get "register", to: "registrations#new",  as: :register
   get "design",   to: "design#index"
+
+  # Test-only sign-in until M1 login exists. Controller: test/support/test_sessions_controller.rb
+  post "test/sign_in", to: "test_sessions#create", as: :test_sign_in if Rails.env.test?
 end
