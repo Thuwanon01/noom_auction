@@ -13,3 +13,10 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+class ActionDispatch::IntegrationTest
+  # Signs in through the dev-only route (see CurrentUserStub); replace when M1.2 adds real login.
+  def login_as(user)
+    post dev_login_path, params: { user_id: user.id }
+  end
+end

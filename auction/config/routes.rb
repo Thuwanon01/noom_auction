@@ -14,10 +14,16 @@ Rails.application.routes.draw do
 
   resources :auctions, only: %i[index show]
   resources :events, only: :new
-  resources :products, only: :new
+  resources :products, only: %i[new create] do
+    member do
+      get   "steps/:step", to: "products#step",        as: :step,        constraints: { step: /[1-4]/ }
+      patch "steps/:step", to: "products#update_step", as: :update_step, constraints: { step: /[1-4]/ }
+    end
+  end
   get "my/events",   to: "events#index",   as: :my_events
   get "my/products", to: "products#index", as: :my_products
   get "login",    to: "sessions#new",       as: :login
   get "register", to: "registrations#new",  as: :register
+  post "dev/login", to: "dev_sessions#create", as: :dev_login if Rails.env.local?
   get "design",   to: "design#index"
 end
