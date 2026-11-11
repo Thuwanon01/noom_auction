@@ -14,7 +14,7 @@
       <label class="field"><span class="field__label">Title</span><input class="input" type="text"></label>
       <label class="field"><span class="field__label">Type Auction</span>
         <select>
-          <% AuctionsController::TYPES.each do |k, v| %><option value="<%= k %>"><%= v %></option><% end %>
+          <% AuctionsHelper::TYPE_LABELS.each do |k, v| %><option value="<%= k %>"><%= v %></option><% end %>
         </select>
       </label>
       <label class="field"><span class="field__label">Product</span>

@@ -22,7 +22,7 @@
             <td><%= thai_datetime(e[:start_at]) %></td>
             <td><%= thai_datetime(e[:stop_at]) %></td>
             <td class="num">฿<%= number_with_delimiter(e[:price]) %></td>
-            <td><span class="badge badge--static badge--<%= e[:status] %>"><%= AuctionsController::STATUSES[e[:status]] %></span></td>
+            <td><span class="badge badge--static badge--<%= e[:status] %>"><%= phase_label(e[:status]) %></span></td>
           </tr>
         <% end %>
       </tbody>
