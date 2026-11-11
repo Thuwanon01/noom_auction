@@ -27,6 +27,27 @@ class User < ApplicationRecord
   validates :national_id, uniqueness: true, allow_nil: true
   validates :phone, uniqueness: true, allow_nil: true
 
+  ONBOARDING_STEPS = 4
+
+  # The furthest wizard step this user may open. Earlier steps stay open so the
+  # user can go back and edit. nil once onboarding is completed.
+  def onboarding_step_reached
+    return nil if completed?
+
+    ONBOARDING_STATUSES.index(onboarding_status) + 1
+  end
+
+  def can_open_onboarding_step?(step)
+    reached = onboarding_step_reached
+    reached.present? && step.between?(1, reached)
+  end
+
+  # Status recorded after a step is submitted. Re-submitting an earlier step
+  # moves the status back, so the later steps (and scoring) run again.
+  def self.status_after_step(step)
+    step == ONBOARDING_STEPS ? "completed" : "step#{step}"
+  end
+
   def occupation_label
     OCCUPATIONS[occupation]
   end

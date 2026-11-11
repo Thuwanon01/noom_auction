@@ -1,0 +1,19 @@
+/* Onboarding wizard (/onboarding/1..4). Builds on design_system.css tokens. */
+.wizard { min-height: 100vh; display: grid; justify-items: center; align-content: start; padding: var(--s-6) var(--s-4) var(--s-7); }
+.wizard__box { width: 100%; max-width: 560px; }
+.wizard__top { display: flex; justify-content: space-between; align-items: center; gap: var(--s-3); margin-bottom: var(--s-5); }
+.wizard__brand { margin: 0; }
+.wizard__top form { margin: 0; }
+.wizard__logout { padding: 5px 12px; font-size: var(--fs-xs); }
+.wizard__title { font-size: var(--fs-xl); margin: var(--s-5) 0 var(--s-1); }
+
+.wizard__count { margin: 0 0 var(--s-2); color: var(--muted); font-size: var(--fs-sm); }
+.wizard__bar { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-1); }
+.wizard__seg { padding-top: var(--s-2); border-top: 3px solid var(--line); color: var(--muted); font-size: var(--fs-xs); }
+.wizard__seg--done { border-top-color: var(--ink-2); }
+.wizard__seg--on { border-top-color: var(--ink); color: var(--ink); font-weight: 400; }
+
+@media (max-width: 520px) {
+  .wizard { padding-top: var(--s-4); }
+  .wizard__seg-label { display: none; }
+}

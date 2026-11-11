@@ -1,0 +1,8 @@
+<%= render layout: "onboarding/shell", locals: { step: 3, title: OnboardingController::STEP_TITLES[3] } do %>
+  <%= form_with url: onboarding_step_path(3), method: :post, class: "form" do |f| %>
+    <div class="form__actions">
+      <% if 3 > 1 %><%= link_to "ย้อนกลับ", onboarding_step_path(2), class: "btn btn--ghost" %><% end %>
+      <%= f.button "ถัดไป", class: "btn btn--primary" %>
+    </div>
+  <% end %>
+<% end %>
