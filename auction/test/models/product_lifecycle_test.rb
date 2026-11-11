@@ -30,6 +30,7 @@ class ProductLifecycleTest < ActiveSupport::TestCase
     p.submit!; assert p.pending_review?
     p.approve!; assert p.available?
     p.start_event!; assert p.in_event?
+    p.await_payment!; assert p.pending_payment?
     p.mark_sold!; assert p.sold?
   end
 
