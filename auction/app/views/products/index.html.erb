@@ -12,13 +12,38 @@
         <%= render "shared/profile" %>
       </div>
     </header>
-    <table class="table">
-      <thead><tr><th>รหัส</th><th>ชื่อสินค้า</th><th>ประเภท</th><th>สถานะ</th></tr></thead>
-      <tbody>
-        <% @products.each do |p| %>
-          <tr><td><%= p[:code] %></td><td><%= p[:name] %></td><td><%= p[:category] %></td><td><span class="tag"><%= @status_labels[p[:status]] %></span></td></tr>
-        <% end %>
-      </tbody>
-    </table>
+    <%= render "shared/flash" %>
+    <% if @products.empty? %>
+      <div class="empty">
+        <p>คุณยังไม่มีสินค้า</p>
+        <%= link_to "ลงทะเบียนสินค้าชิ้นแรก", new_product_path, class: "btn btn--primary" %>
+      </div>
+    <% else %>
+      <table class="table">
+        <thead><tr><th>รหัส</th><th>ชื่อสินค้า</th><th>ประเภท</th><th>สถานะ</th><th></th></tr></thead>
+        <tbody>
+          <% @products.each do |p| %>
+            <tr id="product_<%= p.id %>">
+              <td><%= p.code %></td>
+              <td><%= p.name %>
+                <% if p.rejected? && p.rejection_reason.present? %>
+                  <br><span class="field__hint" style="color: var(--danger)">เหตุผลที่ไม่ผ่าน: <%= p.rejection_reason %></span>
+                <% end %></td>
+              <td><%= p.category_label %></td>
+              <td><span class="tag"><%= p.status_label %></span></td>
+              <td class="row-actions">
+                <% if p.draft? %>
+                  <%= link_to "แก้ไขต่อ", step_product_path(p, [ p.next_incomplete_step, 1 ].max), class: "btn btn--ghost" %>
+                  <%= button_to "ลบ", product_path(p), method: :delete, class: "btn btn--ghost",
+                                form: { data: { turbo_confirm: "ลบแบบร่าง #{p.code}? การลบไม่สามารถย้อนกลับได้" } } %>
+                <% elsif p.rejected? %>
+                  <%= link_to "แก้ไขและส่งอีกครั้ง", step_product_path(p, 1), class: "btn btn--ghost" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
   </main>
 </div>
