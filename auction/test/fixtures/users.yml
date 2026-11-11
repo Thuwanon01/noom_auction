@@ -23,3 +23,11 @@ newbie:
   name: Nok New
   email: newbie@example.com
   onboarding_status: not_started
+
+admin:
+  name: Ada Admin
+  email: admin@example.com
+  onboarding_status: completed
+  credit_score: 800
+  credit_grade: A
+  admin: true
