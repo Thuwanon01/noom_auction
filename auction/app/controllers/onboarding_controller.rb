@@ -12,6 +12,8 @@ class OnboardingController < ApplicationController
     4 => "ผลลัพธ์และยืนยัน"
   }.freeze
 
+  SCORING_TIMEOUT = 5.seconds
+
   before_action :require_login
   before_action :redirect_completed_user
   before_action :set_step, only: %i[show update]
@@ -143,10 +145,21 @@ class OnboardingController < ApplicationController
     end
   end
 
+  # Scoring always runs here on the server from the saved Step 2 data. Nothing
+  # in the request body is used, so a client cannot submit its own score.
   def update_step3
-    finish_step(3)
-    @user.save!
+    result = Timeout.timeout(SCORING_TIMEOUT) { CreditScoring.score_for(@user) }
+    @user.transaction do
+      CreditScoring.record!(@user, result)
+      finish_step(3)
+      @user.save!
+    end
     go_to_next_step
+  rescue StandardError, Timeout::Error => e
+    Rails.logger.error("[onboarding] credit scoring failed for user #{@user.id}: #{e.class}: #{e.message}")
+    @user.reload
+    @scoring_failed = true
+    render :step3, status: :unprocessable_entity
   end
 
   def update_step4
